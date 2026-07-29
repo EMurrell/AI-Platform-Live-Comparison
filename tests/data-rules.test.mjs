@@ -53,7 +53,7 @@ test("a provider failure retains values and does not advance the timestamp", () 
   const after = merged.data.cells.find(cell => cell.provider === "claude-team" && cell.attribute === "mailbox_actions");
   assert.deepEqual(after.value, before.value);
   assert.equal(after.status, "unconfirmed_today");
-  assert.equal(after.failed_checks, 1);
+  assert.equal(after.failed_checks, (before.failed_checks ?? 0) + 1);
 });
 
 test("a low-confidence result cannot overwrite a confirmed value", () => {
@@ -69,8 +69,9 @@ test("a low-confidence result cannot overwrite a confirmed value", () => {
   assert.equal(merged.complete, false);
   assert.deepEqual(after.value, before.value);
   assert.equal(after.status, "unconfirmed_today");
+  const unaffectedBefore = baseline.cells.find(item => item.provider === "gemini-workspace" && item.attribute === "training");
   const unaffected = merged.data.cells.find(item => item.provider === "gemini-workspace" && item.attribute === "training");
-  assert.equal(unaffected.status, undefined);
+  assert.equal(unaffected.status, unaffectedBefore.status);
   assert.equal(merged.data.last_successful_update, baseline.last_successful_update);
 });
 
@@ -78,19 +79,21 @@ test("a price change is held while the pull timestamp advances", () => {
   const results = successfulResults();
   const result = results.find(item => item.provider === "chatgpt-business");
   const proposed = result.cells.find(item => item.attribute === "price");
-  proposed.value = { ...proposed.value, amount: 22 };
-  proposed.display = "$22 USD/user/month annually; $25 monthly";
+  const confirmedAmount = proposed.value.amount;
+  const proposedAmount = confirmedAmount === 22 ? 23 : 22;
+  proposed.value = { ...proposed.value, amount: proposedAmount };
+  proposed.display = `$${proposedAmount} USD/user/month annually; $25 monthly`;
   const merged = mergeResearch(baseline, results, goodFx, timestamp);
   const live = merged.data.cells.find(item => item.provider === "chatgpt-business" && item.attribute === "price");
   assert.equal(merged.complete, true);
   assert.equal(merged.data.last_successful_update, timestamp);
-  assert.equal(live.value.amount, 20);
+  assert.equal(live.value.amount, confirmedAmount);
   assert.equal(live.pending_review.proposed_display, proposed.display);
   assert.equal(merged.pending.proposals.length, 1);
 
   const approved = applyPriceReview(merged.data, merged.pending);
   const updated = approved.cells.find(item => item.provider === "chatgpt-business" && item.attribute === "price");
-  assert.equal(updated.value.amount, 22);
+  assert.equal(updated.value.amount, proposedAmount);
   assert.equal(updated.pending_review, undefined);
   assert.equal(updated.last_changed, "2026-07-30");
 });

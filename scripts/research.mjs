@@ -154,4 +154,5 @@ if (merged.pending) {
 } else {
   console.warn("Pull incomplete. Previous values and last successful update were retained.");
   for (const item of merged.errors) console.warn(`- ${item.provider}: ${item.errors.join(" ")}`);
+  process.exitCode = 1;
 }
