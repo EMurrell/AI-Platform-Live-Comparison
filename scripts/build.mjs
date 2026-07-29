@@ -44,32 +44,18 @@ function formatDate(value, includeTime = false) {
   return `${day} ${month} ${year} at ${time}`;
 }
 
-function cad(value) {
-  return new Intl.NumberFormat("en-CA", {
-    style: "currency",
-    currency: "CAD",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  }).format(value * data.fx.rate);
-}
-
-function priceExtras(cell) {
-  const value = cell.value;
-  if (!value || typeof value !== "object" || value.currency !== "USD") return "";
-  let output = "";
-  if (typeof value.amount === "number") {
-    output += `<span class="cell__cad">About ${cad(value.amount)} CAD/user/month annually`;
-    if (typeof value.monthly_amount === "number") output += `; ${cad(value.monthly_amount)} monthly`;
-    output += `</span>`;
-  } else if (typeof value.input_per_million === "number") {
-    output += `<span class="cell__cad">About ${cad(value.input_per_million)} input and ${cad(value.output_per_million)} output per 1M tokens</span>`;
-  }
-  if (value.promo) {
-    output += `<span class="cell__promo">Promotion: ${escapeHtml(value.promo.description)} at $${escapeHtml(value.promo.amount)} USD`;
-    if (value.promo.ends) output += `, ending ${escapeHtml(formatDate(value.promo.ends))}`;
-    output += `</span>`;
-  }
-  return output;
+function priceEvidence(cell) {
+  const evidence = cell.value?.evidence;
+  if (!Array.isArray(evidence) || evidence.length === 0) return "";
+  const items = evidence.map(item => `<li>
+    <strong>${escapeHtml(item.label)}</strong>
+    <q>${escapeHtml(item.quote)}</q>
+    <a class="evidence-link" href="${escapeHtml(item.source_url)}" rel="noopener noreferrer">Source</a>
+  </li>`).join("");
+  return `<details class="price-evidence">
+    <summary>Exact vendor wording</summary>
+    <ul>${items}</ul>
+  </details>`;
 }
 
 function isRecentChange(cell) {
@@ -80,8 +66,9 @@ function isRecentChange(cell) {
 
 function renderCell(cell, attribute) {
   const classes = ["cell"];
-  const isUnverifiedSeed = cell.confidence === "unverified";
-  const needsVerification = isUnverifiedSeed || cell.confidence === "low" || cell.status === "unconfirmed_today";
+  const isUnverifiedSeed = cell.change_kind === "unverified_seed";
+  const isUnverified = cell.confidence === "unverified";
+  const needsVerification = isUnverified || cell.confidence === "low" || cell.status === "unconfirmed_today";
   if (attribute.emphasis) classes.push("cell--emphasis");
   if (isRecentChange(cell)) classes.push("cell--changed");
   if (needsVerification) classes.push("cell--verify");
@@ -89,15 +76,18 @@ function renderCell(cell, attribute) {
   const flags = [
     cell.pending_review ? `<span class="review-flag">Price change under review</span>` : "",
     needsVerification
-      ? `<span class="verify-flag">${isUnverifiedSeed ? "Unverified machine-generated seed" : "Verify before relying on this"}</span>`
+      ? `<span class="verify-flag">${isUnverifiedSeed ? "Unverified machine-generated seed" : isUnverified ? "Vendor wording is unverified" : "Verify before relying on this"}</span>`
       : ""
   ].join("");
-  const confidenceLabel = isUnverifiedSeed ? "Unverified seed" : `${escapeHtml(cell.confidence)} confidence`;
+  const confidenceLabel = isUnverifiedSeed
+    ? "Unverified seed"
+    : isUnverified
+      ? "Unverified"
+      : `${escapeHtml(cell.confidence)} confidence`;
 
-  return `<td class="${classes.join(" ")}">
-    ${flags}
+  return `<td class="${classes.join(" ")}">${flags}
     <p class="cell__answer">${escapeHtml(cell.display)}</p>
-    ${attribute.id === "price" ? priceExtras(cell) : ""}
+    ${attribute.id === "price" ? priceEvidence(cell) : ""}
     <p class="cell__note">${escapeHtml(cell.note)}</p>
     <div class="cell__meta">
       <a class="source-link" href="${escapeHtml(cell.source_url)}" rel="noopener noreferrer">Source</a>
@@ -158,9 +148,7 @@ const replacements = {
   "/*__STALE_ALERT__*/": staleAlert,
   "/*__PROVIDER_HEADERS__*/": providerHeaders,
   "/*__TABLE_ROWS__*/": tableRows,
-  "/*__FX_RATE__*/": escapeHtml(data.fx.rate),
-  "/*__FX_DATE__*/": escapeHtml(formatDate(data.fx.date)),
-  "/*__FX_URL__*/": escapeHtml(data.fx.source_url),
+  "/*__CELL_COUNT__*/": String(data.cells.length),
   "/*__CHANGELOG__*/": changelog,
   "/*__METHOD__*/": escapeHtml(data.method)
 };

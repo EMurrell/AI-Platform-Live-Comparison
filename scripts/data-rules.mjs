@@ -30,7 +30,7 @@ function cellErrors(cell, provider, attribute) {
       if (!(field === "value" && cell.value === 0)) errors.push(`${attribute.id} is missing ${field}.`);
     }
   }
-  if (!["high", "medium", "low"].includes(cell.confidence)) errors.push(`${attribute.id} has invalid confidence.`);
+  if (!["high", "medium", "low", "unverified"].includes(cell.confidence)) errors.push(`${attribute.id} has invalid confidence.`);
   if (!officialSource(cell.source_url, provider.official_domains)) errors.push(`${attribute.id} has a non-official source.`);
   for (const source of cell.sources ?? []) {
     if (!officialSource(source, provider.official_domains)) errors.push(`${attribute.id} has a non-official supporting source.`);
@@ -39,8 +39,56 @@ function cellErrors(cell, provider, attribute) {
     if (!cell.value || typeof cell.value !== "object" || Array.isArray(cell.value)) {
       errors.push("price must have a structured value.");
     } else {
-      for (const field of ["currency", "amount", "billing_period", "commitment", "monthly_amount", "promo"]) {
+      for (const field of ["billing_currency", "annual", "monthly", "promotion", "usage", "evidence"]) {
         if (!(field in cell.value)) errors.push(`price is missing ${field}.`);
+      }
+      if (cell.value.billing_currency !== null && typeof cell.value.billing_currency !== "string") {
+        errors.push("price billing_currency must be a currency code or null when the vendor does not state it.");
+      }
+      for (const cadence of ["annual", "monthly"]) {
+        const price = cell.value[cadence];
+        if (price === null || price === undefined) continue;
+        if (typeof price !== "object" || Array.isArray(price)) {
+          errors.push(`price ${cadence} must be an object or null.`);
+          continue;
+        }
+        if (!Number.isFinite(price.amount)) errors.push(`price ${cadence} amount must be numeric.`);
+        for (const field of ["unit", "commitment"]) {
+          if (typeof price[field] !== "string" || !price[field]) errors.push(`price ${cadence} is missing ${field}.`);
+        }
+      }
+      if (!cell.value.annual && !cell.value.monthly && !cell.value.usage) {
+        errors.push("price must include annual, monthly or usage billing.");
+      }
+      if (!Array.isArray(cell.value.evidence) || cell.value.evidence.length === 0) {
+        errors.push("price must include quoted evidence.");
+      } else {
+        for (const [index, evidence] of cell.value.evidence.entries()) {
+          if (!evidence?.label || !evidence?.quote || !evidence?.source_url) {
+            errors.push(`price evidence ${index} is incomplete.`);
+          } else if (!officialSource(evidence.source_url, provider.official_domains)) {
+            errors.push(`price evidence ${index} has a non-official source.`);
+          }
+        }
+      }
+      const promotion = cell.value.promotion;
+      if (promotion !== null && promotion !== undefined) {
+        if (typeof promotion !== "object" || Array.isArray(promotion)) {
+          errors.push("price promotion must be an object or null.");
+        } else {
+          if (!promotion.description) errors.push("price promotion is missing description.");
+          if (!promotion.ends || Number.isNaN(new Date(`${promotion.ends}T12:00:00Z`).getTime())) {
+            errors.push("price promotion must include a valid end date.");
+          }
+          for (const cadence of ["annual", "monthly"]) {
+            const amount = promotion[`${cadence}_amount`];
+            if (amount === null || amount === undefined) continue;
+            if (!Number.isFinite(amount)) errors.push(`price promotion ${cadence}_amount must be numeric or null.`);
+            if (!Number.isFinite(promotion[`${cadence}_list_amount`])) {
+              errors.push(`price promotion ${cadence}_list_amount must accompany the promotional amount.`);
+            }
+          }
+        }
       }
     }
   }
@@ -92,7 +140,7 @@ function pendingId(proposals) {
   })))).digest("hex").slice(0, 10);
 }
 
-export function mergeResearch(current, providerResults, fxResult, timestamp) {
+export function mergeResearch(current, providerResults, timestamp) {
   const next = clone(current);
   const resultByProvider = new Map(providerResults.map(result => [result.provider, result]));
   const today = dateOnly(timestamp);
@@ -193,21 +241,6 @@ export function mergeResearch(current, providerResults, fxResult, timestamp) {
   }
 
   next.cells = mergedCells;
-  if (fxResult?.ok && Number.isFinite(fxResult.rate) && fxResult.date && fxResult.source_url) {
-    next.fx = {
-      pair: "USD/CAD",
-      rate: fxResult.rate,
-      date: fxResult.date,
-      source_url: fxResult.source_url
-    };
-  } else {
-    addError("bank-of-canada", fxResult?.error || "Exchange-rate check failed.");
-    next.fx = {
-      ...current.fx,
-      status: "unconfirmed_today",
-      failed_checks: (current.fx.failed_checks ?? 0) + 1
-    };
-  }
 
   const errors = [...errorsByProvider].map(([provider, providerErrors]) => ({
     provider,
@@ -217,7 +250,7 @@ export function mergeResearch(current, providerResults, fxResult, timestamp) {
   if (complete) {
     next.last_successful_update = timestamp;
     next.method = next.seed_verified
-      ? "Official vendor sources checked by the automated research workflow. USD converted with the Bank of Canada daily exchange rate."
+      ? "Official vendor sources checked by the automated research workflow. Prices retain the vendor's stated billing currency; no currency conversion is applied."
       : "Automated research completed against official vendor sources. Human verification of the original seed is still outstanding.";
   }
 

@@ -8,12 +8,6 @@ import { applyPriceReview, mergeResearch } from "../scripts/data-rules.mjs";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const baseline = JSON.parse(await readFile(path.join(root, "data/current.json"), "utf8"));
 const timestamp = "2026-07-30T15:00:00.000Z";
-const goodFx = {
-  ok: true,
-  rate: 1.41,
-  date: "2026-07-30",
-  source_url: "https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"
-};
 
 // Shape is derived from the data file so adding or removing a row or a provider
 // does not break the suite.
@@ -42,7 +36,7 @@ function successfulResults(data = baseline) {
 }
 
 test("a complete no-change pull advances only the successful-update timestamp", () => {
-  const merged = mergeResearch(baseline, successfulResults(), goodFx, timestamp);
+  const merged = mergeResearch(baseline, successfulResults(), timestamp);
   assert.equal(merged.complete, true);
   assert.equal(merged.data.last_successful_update, timestamp);
   assert.equal(merged.pending, null);
@@ -61,7 +55,7 @@ test("one provider failure retains only that provider while the others update", 
   const index = results.findIndex(item => item.provider === failedProvider);
   results[index] = { provider: failedProvider, ok: false, error: "Simulated timeout" };
 
-  const merged = mergeResearch(baseline, results, goodFx, timestamp);
+  const merged = mergeResearch(baseline, results, timestamp);
   assert.equal(merged.complete, false);
   assert.equal(merged.totalFailure, false);
   assert.equal(merged.acceptedCells, TOTAL_CELLS - failedCount);
@@ -91,7 +85,7 @@ test("one low-confidence cell is retained while its provider siblings update", (
   cell.display = "No";
   cell.confidence = "low";
 
-  const merged = mergeResearch(baseline, results, goodFx, timestamp);
+  const merged = mergeResearch(baseline, results, timestamp);
   const before = baseline.cells.find(item => item.provider === providerId && item.attribute === attributeId);
   const after = merged.data.cells.find(item => item.provider === providerId && item.attribute === attributeId);
   assert.equal(merged.complete, false);
@@ -112,37 +106,44 @@ test("a price change is held while the pull timestamp advances", () => {
   const results = successfulResults();
   const result = results.find(item => item.provider === "chatgpt-business");
   const proposed = result.cells.find(item => item.attribute === "price");
-  const confirmedAmount = proposed.value.amount;
+  const confirmedAmount = proposed.value.annual.amount;
   const proposedAmount = confirmedAmount + 3;
-  proposed.value = { ...proposed.value, amount: proposedAmount };
-  proposed.display = `$${proposedAmount} USD/user/month billed annually; $25 monthly`;
+  proposed.value = {
+    ...proposed.value,
+    annual: { ...proposed.value.annual, amount: proposedAmount }
+  };
+  proposed.display = `CAD ${proposedAmount}/user/month billed annually`;
 
-  const merged = mergeResearch(baseline, results, goodFx, timestamp);
+  const merged = mergeResearch(baseline, results, timestamp);
   const live = merged.data.cells.find(item => item.provider === "chatgpt-business" && item.attribute === "price");
   assert.equal(merged.complete, true);
   assert.equal(merged.data.last_successful_update, timestamp);
-  assert.equal(live.value.amount, confirmedAmount);
+  assert.equal(live.value.annual.amount, confirmedAmount);
   assert.equal(live.pending_review.proposed_display, proposed.display);
   assert.equal(merged.pending.proposals.length, 1);
 
   const approved = applyPriceReview(merged.data, merged.pending);
   const updated = approved.cells.find(item => item.provider === "chatgpt-business" && item.attribute === "price");
-  assert.equal(updated.value.amount, proposedAmount);
+  assert.equal(updated.value.annual.amount, proposedAmount);
   assert.equal(updated.pending_review, undefined);
   assert.equal(updated.last_changed, "2026-07-30");
 });
 
-test("an exchange-rate failure retains CAD state while every cell still updates", () => {
-  const merged = mergeResearch(baseline, successfulResults(), { ok: false, error: "Simulated FX failure" }, timestamp);
-  assert.equal(merged.complete, false);
+test("an unverified but defensible finding is accepted without blocking its siblings", () => {
+  const results = successfulResults();
+  const result = results.find(item => item.provider === "claude-team");
+  const price = result.cells.find(item => item.attribute === "price");
+  price.confidence = "unverified";
+  price.note = "The vendor states amounts but not the billing currency.";
+
+  const merged = mergeResearch(baseline, results, timestamp);
+  const updated = merged.data.cells.find(item => item.provider === "claude-team" && item.attribute === "price");
+  assert.equal(merged.complete, true);
   assert.equal(merged.totalFailure, false);
   assert.equal(merged.acceptedCells, TOTAL_CELLS);
-  assert.equal(merged.data.last_successful_update, baseline.last_successful_update);
-  assert.equal(merged.data.fx.rate, baseline.fx.rate);
-  assert.equal(merged.data.fx.status, "unconfirmed_today");
-  assert.equal(merged.data.fx.failed_checks, (baseline.fx.failed_checks ?? 0) + 1);
+  assert.equal(updated.confidence, "unverified");
+  assert.equal(updated.note, price.note);
   assert.ok(merged.data.cells.every(cell => cell.checked === "2026-07-30"));
-  assert.ok(merged.data.cells.every(cell => cell.confidence === "high"));
 });
 
 test("a total provider outage retains all values and marks every cell stale", () => {
@@ -151,7 +152,7 @@ test("a total provider outage retains all values and marks every cell stale", ()
     ok: false,
     error: "Simulated total outage"
   }));
-  const merged = mergeResearch(baseline, failures, goodFx, timestamp);
+  const merged = mergeResearch(baseline, failures, timestamp);
   assert.equal(merged.complete, false);
   assert.equal(merged.totalFailure, true);
   assert.equal(merged.acceptedCells, 0);

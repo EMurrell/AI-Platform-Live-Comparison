@@ -14,6 +14,10 @@ const [html, data, refreshWorkflow] = await Promise.all([
 const EMPHASISED_ATTRIBUTES = ["mailbox_actions", "unattended"];
 const occurrences = (pattern) => (html.match(pattern) ?? []).length;
 const cellsWithConfidence = (level) => data.cells.filter(cell => cell.confidence === level).length;
+const unverifiedSeedCells = data.cells.filter(cell => cell.change_kind === "unverified_seed");
+const researchedUnverifiedCells = data.cells.filter(
+  cell => cell.confidence === "unverified" && cell.change_kind !== "unverified_seed"
+);
 
 test("the built page exposes the unverified seed without an update date", () => {
   assert.equal(data.last_successful_update, null);
@@ -43,21 +47,37 @@ test("verified and unverified cells are rendered distinctly", () => {
   const verified = data.cells.length - unverified;
   assert.ok(unverified > 0, "the fixture should still contain unverified cells");
   assert.ok(verified > 0, "the fixture should contain verified cells once verification has begun");
+  assert.ok(unverifiedSeedCells.length > 0, "machine-generated seed cells should remain explicit");
+  assert.ok(researchedUnverifiedCells.length > 0, "researched vendor ambiguities should remain explicit");
 
-  // Every unverified cell carries the seed warning; verified cells never do.
   assert.equal(
     occurrences(/<span class="verify-flag">Unverified machine-generated seed<\/span>/g),
-    unverified
+    unverifiedSeedCells.length
   );
-  // Each unverified cell labels its confidence as "Unverified seed", plus the page header.
-  assert.equal(occurrences(/Unverified seed/g), unverified + 1);
-  // Verified cells state their confidence level instead.
+  assert.equal(
+    occurrences(/<span class="verify-flag">Vendor wording is unverified<\/span>/g),
+    researchedUnverifiedCells.length
+  );
+  assert.equal(occurrences(/<span class="confidence">Unverified seed<\/span>/g), unverifiedSeedCells.length);
+  assert.equal(occurrences(/<span class="confidence">Unverified<\/span>/g), researchedUnverifiedCells.length);
+  assert.equal(occurrences(/Unverified seed/g), unverifiedSeedCells.length + 1);
   for (const level of ["high", "medium"]) {
     assert.equal(
       occurrences(new RegExp(`<span class="confidence">${level} confidence</span>`, "g")),
       cellsWithConfidence(level)
     );
   }
+});
+
+test("price rows preserve vendor currencies and expose exact quoted evidence", () => {
+  const priceCells = data.cells.filter(cell => cell.attribute === "price");
+  const evidenceCount = priceCells.reduce((sum, cell) => sum + cell.value.evidence.length, 0);
+  assert.equal("fx" in data, false);
+  assert.ok(priceCells.every(cell => "billing_currency" in cell.value));
+  assert.ok(priceCells.every(cell => Array.isArray(cell.value.evidence) && cell.value.evidence.length > 0));
+  assert.equal(occurrences(/class="evidence-link"/g), evidenceCount);
+  assert.doesNotMatch(html, /Bank of Canada|indicative CAD|Exchange rate used/i);
+  assert.match(html, /no currency conversion is applied/i);
 });
 
 test("the table shape on the page matches the data file", () => {

@@ -5,7 +5,7 @@ A source-backed, neutral comparison of business AI tools for managing work email
 ## What is here
 
 - `index.html` is the deployable, self-contained page.
-- `data/current.json` is the only live data store. It contains 45 required cells.
+- `data/current.json` is the only live data store. Its table shape is derived from the configured providers and attributes.
 - `src/` contains the HTML template and U7 styling.
 - `scripts/research.mjs` checks the five approaches in parallel, using official domains only.
 - `.github/workflows/refresh.yml` runs the daily refresh and protects pricing changes.
@@ -25,16 +25,18 @@ Then open `http://localhost:8000`.
 
 The machine-generated seed is explicitly unverified. The public page does not show a “Last updated on” date until `seed_verified` is true and a complete pull has set `last_successful_update`.
 
-- A complete pull requires all 45 cells plus a Bank of Canada exchange rate.
+- A complete pull requires every configured provider-attribute cell.
 - A low-confidence or invalid cell keeps its previous value, preserves its previous `checked` date and increments `failed_checks`; valid sibling cells still update.
-- A provider failure affects only that provider's nine cells.
-- An exchange-rate failure retains the previous CAD rate but does not block cell updates.
+- An unverified result may publish a defensible value with its ambiguity preserved in the note and confidence label.
+- A provider failure affects only that provider's cells.
 - Partial pulls commit successful cells and staleness state without advancing `last_successful_update`.
 - A total provider failure persists staleness state and then fails the workflow.
 - A successful no-change pull advances the timestamp.
 - A detected price change advances the successful-pull timestamp but leaves the last confirmed price live with an “under review” marker.
 - The review branch applies the proposed price. Merging its pull request publishes the confirmed change.
 - `last_changed` advances only when the underlying value changes.
+
+Pricing records preserve the billing currency stated by each vendor for a Canadian customer. Annual and monthly amounts are stored separately, promotions retain their list price and end date, and every figure includes exact quoted vendor text with its official URL. No exchange-rate conversion is performed.
 
 ## GitHub setup
 

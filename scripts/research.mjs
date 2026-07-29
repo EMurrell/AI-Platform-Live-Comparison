@@ -46,7 +46,7 @@ function schemaFor(attributes) {
             display: { type: "string", minLength: 1 },
             source_url: { type: "string", minLength: 1 },
             sources: { type: "array", items: { type: "string" } },
-            confidence: { type: "string", enum: ["high", "medium", "low"] },
+            confidence: { type: "string", enum: ["high", "medium", "low", "unverified"] },
             note: { type: "string", minLength: 1 }
           }
         }
@@ -63,7 +63,7 @@ Provider: ${provider.name}
 Today: ${timestamp.slice(0, 10)}
 Official domains allowed: ${provider.official_domains.join(", ")}
 
-Research all nine attributes below using current official provider pages only:
+Research every attribute below using current official provider pages only:
 ${current.attributes.map(attribute => `- ${attribute.id}: ${attribute.label} — ${attribute.description}`).join("\n")}
 
 Rules:
@@ -71,10 +71,14 @@ Rules:
 - Check every item today, even if it appears unchanged.
 - source_url and every item in sources must be a direct official URL from an allowed domain.
 - Do not use snippets, reseller pages, news articles, community posts or third-party summaries.
-- Use low confidence whenever official documentation is unclear or conflicting. Never guess.
+- Use unverified confidence when official documentation is ambiguous or contradictory. Use low confidence when a check cannot defend a value. Never guess.
 - value must be stable machine-readable JSON; display must be concise plain language.
-- For price, value must include currency, amount, billing_period, commitment, monthly_amount and promo. Use null where the pricing structure genuinely does not use a field.
-- Distinguish list pricing from promotions.
+- For price, report the amount and currency billed to a Canadian customer without converting currencies.
+- For price, value must include billing_currency, annual, monthly, promotion, usage and evidence. Use null where a field genuinely does not apply or the vendor does not state the currency.
+- annual and monthly must be separate objects containing amount, unit and commitment.
+- Distinguish list pricing from promotions. A promotion must include its list amount, promotional amount and end date for each applicable billing cadence.
+- evidence must contain the exact quoted vendor text and direct official source URL for every price, currency and promotion figure.
+- Prefer locale-pinned Canadian URLs where the vendor provides them.
 - Explain material limits, admin dependencies and permissions in note.
 - Use Canadian spelling and sentence case. Do not recommend a provider.
 
@@ -115,32 +119,10 @@ ${JSON.stringify(existing, null, 2)}`;
   }
 }
 
-async function fetchExchangeRate() {
-  try {
-    const response = await fetch("https://www.bankofcanada.ca/valet/observations/FXUSDCAD/json?recent=5");
-    if (!response.ok) throw new Error(`Bank of Canada ${response.status}`);
-    const payload = await response.json();
-    const observations = payload.observations ?? [];
-    const latest = observations.findLast(observation => Number.isFinite(Number(observation.FXUSDCAD?.v)));
-    if (!latest) throw new Error("No current FXUSDCAD observation returned.");
-    return {
-      ok: true,
-      rate: Number(latest.FXUSDCAD.v),
-      date: latest.d,
-      source_url: "https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"
-    };
-  } catch (error) {
-    return { ok: false, error: error.message };
-  }
-}
-
 console.log(`Checking ${current.providers.length} providers in parallel with ${model}.`);
-const [providerResults, fxResult] = await Promise.all([
-  Promise.all(current.providers.map(researchProvider)),
-  fetchExchangeRate()
-]);
+const providerResults = await Promise.all(current.providers.map(researchProvider));
 
-const merged = mergeResearch(current, providerResults, fxResult, timestamp);
+const merged = mergeResearch(current, providerResults, timestamp);
 await writeFile(dataPath, `${JSON.stringify(merged.data, null, 2)}\n`);
 
 if (merged.pending) {

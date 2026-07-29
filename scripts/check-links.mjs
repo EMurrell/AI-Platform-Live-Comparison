@@ -5,8 +5,11 @@ import path from "node:path";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const data = JSON.parse(await readFile(path.join(root, "data/current.json"), "utf8"));
 const urls = [...new Set([
-  ...data.cells.flatMap(cell => [cell.source_url, ...(cell.sources ?? [])]),
-  data.fx.source_url
+  ...data.cells.flatMap(cell => [
+    cell.source_url,
+    ...(cell.sources ?? []),
+    ...(cell.value?.evidence ?? []).map(item => item.source_url)
+  ])
 ])];
 
 async function fetchOnce(url) {

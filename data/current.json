@@ -1,14 +1,8 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "seed_verified": false,
   "last_successful_update": null,
-  "method": "Partially verified. Rows marked verified were read from the official vendor page on 29 July 2026. Rows marked unverified are carried over from the original machine-generated seed and should not be relied on.",
-  "fx": {
-    "pair": "USD/CAD",
-    "rate": 1.4093,
-    "date": "2026-07-24",
-    "source_url": "https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"
-  },
+  "method": "Partially verified. Pricing rows were read directly from official vendor pages for a Canadian customer on 29 July 2026; ambiguous vendor wording is explicitly marked unverified. Other unverified rows remain from the original machine-generated seed.",
   "providers": [
     {
       "id": "chatgpt-business",
@@ -16,6 +10,7 @@
       "short_name": "ChatGPT",
       "official_domains": [
         "openai.com",
+        "chatgpt.com",
         "help.openai.com",
         "developers.openai.com",
         "platform.openai.com"
@@ -74,7 +69,7 @@
       "id": "price",
       "group": "Cost",
       "label": "Price",
-      "description": "USD list price. CAD is indicative."
+      "description": "The amount and currency billed to a Canadian customer. No currency conversion."
     },
     {
       "id": "seat_minimum",
@@ -120,20 +115,43 @@
       "provider": "chatgpt-business",
       "attribute": "price",
       "value": {
-        "currency": "USD",
-        "amount": 20,
-        "billing_period": "user/month",
-        "commitment": "annual",
-        "monthly_amount": 25,
-        "promo": null
+        "billing_currency": "CAD",
+        "annual": {
+          "amount": 27,
+          "unit": "user/month",
+          "commitment": "billed annually"
+        },
+        "monthly": {
+          "amount": 34,
+          "unit": "user/month",
+          "commitment": "billed monthly"
+        },
+        "promotion": null,
+        "usage": null,
+        "evidence": [
+          {
+            "label": "Annual amount",
+            "quote": "CA$27 / user / month*",
+            "source_url": "https://chatgpt.com/pricing/"
+          },
+          {
+            "label": "Monthly amount",
+            "quote": "*2+ users, billed annually. CA$34 per user per month when billed monthly.",
+            "source_url": "https://chatgpt.com/pricing/"
+          }
+        ]
       },
-      "display": "$20 USD/user/month billed annually; $25 monthly",
-      "source_url": "https://help.openai.com/en/articles/8792536-managing-billing-and-seats-in-chatgpt-business",
-      "confidence": "high",
+      "display": "CAD 27/user/month with annual billing; CAD 34 with monthly billing",
+      "source_url": "https://chatgpt.com/pricing/",
+      "sources": [
+        "https://chatgpt.com/pricing/",
+        "https://help.openai.com/en/articles/8792536-managing-billing-and-seats-in-chatgpt-business"
+      ],
+      "confidence": "unverified",
       "checked": "2026-07-29",
       "last_changed": "2026-07-29",
-      "note": "Minimum 2 standard seats. The customer-facing pricing page localises and shows CA$27 to a Canadian visitor.",
-      "change_kind": "human_verified"
+      "note": "The live Canadian pricing page now says CA$34 monthly, but an earlier view of the same page showed an unlabelled $25.00 monthly footnote. The current CAD figures are defensible; the prior contradiction remains unresolved until checkout.",
+      "change_kind": "researched_unverified"
     },
     {
       "provider": "chatgpt-business",
@@ -211,20 +229,38 @@
       "provider": "claude-team",
       "attribute": "price",
       "value": {
-        "currency": "USD",
-        "amount": 28,
-        "billing_period": "seat/month",
-        "commitment": "annual",
-        "monthly_amount": 35,
-        "promo": null
+        "billing_currency": null,
+        "annual": {
+          "amount": 28,
+          "unit": "seat/month",
+          "commitment": "billed annually"
+        },
+        "monthly": {
+          "amount": 35,
+          "unit": "seat/month",
+          "commitment": "billed monthly"
+        },
+        "promotion": null,
+        "usage": null,
+        "evidence": [
+          {
+            "label": "Annual and monthly amounts",
+            "quote": "$28 Per seat / month if billed annually. $35 if billed monthly.",
+            "source_url": "https://claude.com/pricing"
+          }
+        ]
       },
-      "display": "$28/seat/month billed annually; $35 monthly",
+      "display": "$28/seat/month with annual billing; $35 monthly. Currency not stated.",
       "source_url": "https://claude.com/pricing",
-      "confidence": "medium",
+      "sources": [
+        "https://claude.com/pricing",
+        "https://support.claude.com/en/articles/9266767-what-is-the-team-plan"
+      ],
+      "confidence": "unverified",
       "checked": "2026-07-29",
       "last_changed": "2026-07-29",
-      "note": "The pricing page shows an unlabelled dollar sign with no currency code or selector, so the currency is inferred rather than stated.",
-      "change_kind": "human_verified"
+      "note": "Claude's live page displays $28 and $35 without a currency code or region selector. Its help centre says pricing and currency vary by region and labels $20/$25 as U.S. pricing, so assigning CAD or USD to the live figures would be a guess.",
+      "change_kind": "researched_unverified"
     },
     {
       "provider": "claude-team",
@@ -302,24 +338,57 @@
       "provider": "gemini-workspace",
       "attribute": "price",
       "value": {
-        "currency": "USD",
-        "amount": 14,
-        "billing_period": "user/month",
-        "commitment": "annual",
-        "monthly_amount": 16.8,
-        "promo": {
-          "amount": 9.8,
-          "description": "30% off for the first 3 months",
-          "ends": "2026-10-07"
-        }
+        "billing_currency": "CAD",
+        "annual": {
+          "amount": 18.4,
+          "unit": "user/month",
+          "commitment": "one-year commitment; billed monthly"
+        },
+        "monthly": {
+          "amount": 22,
+          "unit": "user/month",
+          "commitment": "monthly"
+        },
+        "promotion": {
+          "description": "50% off",
+          "annual_amount": 9.2,
+          "annual_list_amount": 18.4,
+          "monthly_amount": 11,
+          "monthly_list_amount": 22,
+          "starts": "2026-08-12",
+          "ends": "2026-11-12"
+        },
+        "usage": null,
+        "evidence": [
+          {
+            "label": "Annual list and promotional amounts",
+            "quote": "Discount details Aug 12, 2026 – Nov 12, 2026 $9.20 CAD $18.40 (50% off) per user / month for all users Starting Nov 12, 2026 $18.40 CAD per user / month for all users",
+            "source_url": "https://workspace.google.com/intl/en_ca/pricing.html"
+          },
+          {
+            "label": "Monthly list and promotional amounts",
+            "quote": "Discount details Aug 12, 2026 – Nov 12, 2026 $11.00 CAD $22.00 (50% off) per user / month for all users Starting Nov 12, 2026 $22.00 CAD per user / month for all users",
+            "source_url": "https://workspace.google.com/intl/en_ca/pricing.html"
+          },
+          {
+            "label": "Promotion duration shown on the card",
+            "quote": "50% off your first 3 months of Google Workspace. Offer valid for a limited time. Discount applied at checkout.",
+            "source_url": "https://workspace.google.com/intl/en_ca/pricing.html"
+          },
+          {
+            "label": "Contradictory promotion footnote",
+            "quote": "This introductory price is only available for the first 20 users added, for 12 months.",
+            "source_url": "https://workspace.google.com/intl/en_ca/pricing.html"
+          }
+        ]
       },
-      "display": "$14 USD/user/month annually; $16.80 monthly",
-      "source_url": "https://workspace.google.com/pricing.html",
+      "display": "CAD 18.40 annual list (CAD 9.20 promo); CAD 22 monthly list (CAD 11 promo). Promo shown for 12 August–12 November 2026.",
+      "source_url": "https://workspace.google.com/intl/en_ca/pricing.html",
       "confidence": "unverified",
       "checked": "2026-07-29",
       "last_changed": "2026-07-29",
-      "note": "Not yet verified against the official source. Carried over from the machine-generated seed.",
-      "change_kind": "unverified_seed"
+      "note": "The Canada page states all prices are CAD. Its price card and dated details say 50% off for three months, but the linked ** footnote says the introductory price lasts 12 months for the first 20 users. The amounts and dated promotion window are explicit; the duration terms conflict.",
+      "change_kind": "researched_unverified"
     },
     {
       "provider": "gemini-workspace",
@@ -397,22 +466,51 @@
       "provider": "m365-copilot",
       "attribute": "price",
       "value": {
-        "currency": "USD",
-        "amount": 18,
-        "billing_period": "user/month",
-        "commitment": "annual",
-        "monthly_amount": null,
-        "promo": {
-          "list_amount": 21,
+        "billing_currency": "CAD",
+        "annual": {
+          "amount": 28.5,
+          "unit": "user/month",
+          "commitment": "paid yearly"
+        },
+        "monthly": {
+          "amount": 34.2,
+          "unit": "user/month",
+          "commitment": "monthly commitment"
+        },
+        "promotion": {
+          "description": "Annual price for the first year",
+          "annual_amount": 24.43,
+          "annual_list_amount": 28.5,
+          "monthly_amount": null,
+          "monthly_list_amount": 34.2,
+          "starts": "2026-07-01",
           "ends": "2026-09-30"
-        }
+        },
+        "usage": null,
+        "evidence": [
+          {
+            "label": "Annual list and promotional amounts",
+            "quote": "Originally starting from CAD $28.50 now starting from CAD $24.43 user/month, paid yearly (Annual subscription—auto renews)",
+            "source_url": "https://www.microsoft.com/en-ca/microsoft-365-copilot/pricing"
+          },
+          {
+            "label": "Monthly amount",
+            "quote": "CAD $34.20 user/month (Monthly commitment)",
+            "source_url": "https://www.microsoft.com/en-ca/microsoft-365-copilot/pricing"
+          },
+          {
+            "label": "Promotion dates",
+            "quote": "This discount offer is available between July 1, 2026, and September 30, 2026. An annual commitment is required, and promotional pricing applies to the first year only.",
+            "source_url": "https://www.microsoft.com/en-ca/microsoft-365-copilot/pricing"
+          }
+        ]
       },
-      "display": "$18 USD/user/month billed yearly, promotional to 30 September 2026. List price $21.",
-      "source_url": "https://www.microsoft.com/en-us/microsoft-365-copilot/pricing",
+      "display": "CAD 28.50 annual list (CAD 24.43 promo); CAD 34.20 monthly. Promo ends 30 September 2026.",
+      "source_url": "https://www.microsoft.com/en-ca/microsoft-365-copilot/pricing",
       "confidence": "high",
       "checked": "2026-07-29",
       "last_changed": "2026-07-29",
-      "note": "Bundles are often the real choice: Business Standard with Copilot is $23.50 all in and Business Premium with Copilot is $32.00, neither requiring a separate licence purchase.",
+      "note": "The promotional amount applies only to an annual commitment for the first year. A qualifying Microsoft 365 Business plan is also required.",
       "change_kind": "human_verified"
     },
     {
@@ -491,22 +589,44 @@
       "provider": "custom-build",
       "attribute": "price",
       "value": {
-        "currency": "USD",
-        "amount": null,
-        "billing_period": "usage",
-        "commitment": "none",
-        "monthly_amount": null,
-        "promo": null,
-        "input_per_million": 5,
-        "output_per_million": 30
+        "billing_currency": "USD",
+        "annual": null,
+        "monthly": null,
+        "promotion": null,
+        "usage": {
+          "input_per_million": 5,
+          "output_per_million": 30,
+          "unit": "1M tokens"
+        },
+        "evidence": [
+          {
+            "label": "Input amount",
+            "quote": "Per 1M tokens Input $5.00",
+            "source_url": "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
+          },
+          {
+            "label": "Output amount",
+            "quote": "Per 1M tokens Output $30.00",
+            "source_url": "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
+          },
+          {
+            "label": "Billing currency",
+            "quote": "Purchases for API credits are currently limited to USD.",
+            "source_url": "https://help.openai.com/en/articles/10421635-multicurrency-billing"
+          }
+        ]
       },
-      "display": "Usage-based, not per seat. GPT-5.6 Sol example: $5 input and $30 output per 1M tokens",
+      "display": "Usage-based: USD 5 input and USD 30 output per 1M tokens. No annual or monthly subscription.",
       "source_url": "https://developers.openai.com/api/docs/models/gpt-5.6-sol",
-      "confidence": "unverified",
+      "sources": [
+        "https://developers.openai.com/api/docs/models/gpt-5.6-sol",
+        "https://help.openai.com/en/articles/10421635-multicurrency-billing"
+      ],
+      "confidence": "high",
       "checked": "2026-07-29",
       "last_changed": "2026-07-29",
-      "note": "Not a fixed product. Requires a locked reference architecture before any value can be stated.",
-      "change_kind": "unverified_seed"
+      "note": "This is the model API charge only, not a fixed implementation cost. Hosting, integration and operating costs are separate.",
+      "change_kind": "human_verified"
     },
     {
       "provider": "custom-build",
@@ -586,6 +706,10 @@
     }
   ],
   "changelog": [
+    {
+      "date": "2026-07-29",
+      "summary": "Pricing rows changed to the amounts and currencies shown to Canadian customers. Currency conversion was removed; vendor ambiguities remain explicitly unverified."
+    },
     {
       "date": "2026-07-29",
       "summary": "Unverified machine-generated seed added. No successful refresh or human verification has occurred."
