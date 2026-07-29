@@ -1,0 +1,622 @@
+{
+  "schema_version": 1,
+  "last_successful_update": "2026-07-29T12:00:00-04:00",
+  "method": "Official vendor sources checked manually. USD converted with the Bank of Canada daily exchange rate.",
+  "fx": {
+    "pair": "USD/CAD",
+    "rate": 1.4093,
+    "date": "2026-07-24",
+    "source_url": "https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"
+  },
+  "providers": [
+    {
+      "id": "chatgpt-business",
+      "name": "ChatGPT Business",
+      "short_name": "ChatGPT",
+      "official_domains": ["openai.com", "help.openai.com", "developers.openai.com", "platform.openai.com"]
+    },
+    {
+      "id": "claude-team",
+      "name": "Claude Team",
+      "short_name": "Claude",
+      "official_domains": ["claude.com", "support.claude.com", "anthropic.com", "docs.anthropic.com"]
+    },
+    {
+      "id": "gemini-workspace",
+      "name": "Gemini for Google Workspace",
+      "short_name": "Gemini",
+      "official_domains": ["google.com", "support.google.com", "workspace.google.com", "developers.google.com"]
+    },
+    {
+      "id": "m365-copilot",
+      "name": "Microsoft 365 Copilot Business",
+      "short_name": "M365 Copilot",
+      "official_domains": ["microsoft.com", "support.microsoft.com", "learn.microsoft.com"]
+    },
+    {
+      "id": "custom-build",
+      "name": "Custom build",
+      "short_name": "Custom build",
+      "official_domains": ["openai.com", "developers.openai.com", "platform.openai.com", "help.openai.com", "google.com", "developers.google.com", "microsoft.com", "learn.microsoft.com"]
+    }
+  ],
+  "attributes": [
+    {"id": "price", "group": "Cost", "label": "Price", "description": "USD list price. CAD is indicative."},
+    {"id": "seat_minimum", "group": "Cost", "label": "Seat minimum", "description": "Smallest supported purchase."},
+    {"id": "prerequisite", "group": "Cost", "label": "Prerequisite subscription", "description": "What must already be licensed."},
+    {"id": "mailbox_access", "group": "Capability", "label": "Native mailbox access", "description": "Gmail, Outlook, both or neither."},
+    {"id": "mailbox_actions", "group": "Capability", "label": "Can act on email", "description": "Label, archive, move, draft or send.", "emphasis": true},
+    {"id": "unattended", "group": "Capability", "label": "Unattended execution", "description": "Scheduled or event-driven work without a live chat.", "emphasis": true},
+    {"id": "connectors", "group": "Capability", "label": "Other connectors", "description": "Examples of supported work systems."},
+    {"id": "training", "group": "Governance", "label": "Business data used for training", "description": "Default use of customer content for model training."},
+    {"id": "admin", "group": "Governance", "label": "Admin controls", "description": "Console, audit and retention controls."}
+  ],
+  "cells": [
+    {
+      "provider": "chatgpt-business",
+      "attribute": "price",
+      "value": {"currency": "USD", "amount": 20, "billing_period": "user/month", "commitment": "annual", "monthly_amount": 25, "promo": null},
+      "display": "$20 USD/user/month annually; $25 monthly",
+      "source_url": "https://help.openai.com/en/articles/8792536-managing-billing-and-seats-in-chatgpt-business",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "List price for the standard Business plan.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "chatgpt-business",
+      "attribute": "seat_minimum",
+      "value": 2,
+      "display": "2 users",
+      "source_url": "https://help.openai.com/en/articles/8792536-managing-billing-and-seats-in-chatgpt-business",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "A Business workspace requires at least two users.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "chatgpt-business",
+      "attribute": "prerequisite",
+      "value": "none",
+      "display": "None",
+      "source_url": "https://openai.com/business/chatgpt-pricing/",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "ChatGPT Business is a standalone workspace subscription.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "chatgpt-business",
+      "attribute": "mailbox_access",
+      "value": "both",
+      "display": "Gmail and Outlook",
+      "source_url": "https://openai.com/business/plugins/",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Workspace admins control which plugins are available.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "chatgpt-business",
+      "attribute": "mailbox_actions",
+      "value": "outlook_write_gmail_reference",
+      "display": "Outlook can move, mark, draft and send. Gmail is mainly search and reference.",
+      "source_url": "https://help.openai.com/en/articles/12512241-outlook-email-and-calendar-app-for-chatgpt",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Write actions depend on admin settings and granted Microsoft scopes.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "chatgpt-business",
+      "attribute": "unattended",
+      "value": "scheduled",
+      "display": "Yes, with scheduled tasks or workspace agent schedules",
+      "source_url": "https://help.openai.com/en/articles/10291617-tasks-in-chatgpt",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Task limits and available actions vary by feature and workspace.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "chatgpt-business",
+      "attribute": "connectors",
+      "value": ["Google Drive", "SharePoint", "Teams", "Slack", "Box", "Dropbox", "GitHub"],
+      "display": "Drive, SharePoint, Teams, Slack, Box, Dropbox, GitHub and more",
+      "source_url": "https://openai.com/business/plugins/",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Availability and actions vary by plugin.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "chatgpt-business",
+      "attribute": "training",
+      "value": false,
+      "display": "No, by default",
+      "source_url": "https://help.openai.com/en/articles/8798634-managing-data-sharing-and-privacy-in-chatgpt-business",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Business workspace inputs and outputs are excluded from training by default.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "chatgpt-business",
+      "attribute": "admin",
+      "value": "workspace_admin_limited_audit_retention",
+      "display": "Admin console, roles, SSO and plugin controls; audit and retention are lighter than Enterprise",
+      "source_url": "https://openai.com/business/chatgpt-pricing/",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Enterprise adds the broader compliance and lifecycle controls.",
+      "change_kind": "baseline"
+    },
+
+    {
+      "provider": "claude-team",
+      "attribute": "price",
+      "value": {"currency": "USD", "amount": 20, "billing_period": "user/month", "commitment": "annual", "monthly_amount": 25, "promo": null},
+      "display": "$20 USD/user/month annually; $25 monthly",
+      "source_url": "https://support.claude.com/en/articles/9266767-what-is-the-team-plan",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Standard Team seat. Premium seats cost more.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "claude-team",
+      "attribute": "seat_minimum",
+      "value": 2,
+      "display": "2 users",
+      "source_url": "https://support.claude.com/en/articles/9266767-what-is-the-team-plan",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "The Team plan starts at two members.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "claude-team",
+      "attribute": "prerequisite",
+      "value": "none",
+      "display": "None",
+      "source_url": "https://support.claude.com/en/articles/9266767-what-is-the-team-plan",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Claude Team is a standalone workspace subscription.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "claude-team",
+      "attribute": "mailbox_access",
+      "value": "both",
+      "display": "Gmail and Outlook",
+      "source_url": "https://claude.com/docs/connectors/getting-started",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "The Microsoft 365 connector includes Outlook mail.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "claude-team",
+      "attribute": "mailbox_actions",
+      "value": "write_with_limits",
+      "display": "Gmail can draft and manage labels or threads, but not send. Outlook can draft and send when enabled.",
+      "source_url": "https://support.claude.com/en/articles/10166901-use-google-workspace-connectors",
+      "sources": [
+        "https://support.claude.com/en/articles/10166901-use-google-workspace-connectors",
+        "https://support.claude.com/en/articles/12542951-set-up-the-microsoft-365-connector"
+      ],
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Claude requests approval for Gmail drafts. Microsoft write tools require admin-granted scopes.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "claude-team",
+      "attribute": "unattended",
+      "value": "scheduled",
+      "display": "Yes, with recurring Cowork tasks",
+      "source_url": "https://support.claude.com/en/articles/13854387-schedule-recurring-tasks-in-claude-cowork",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Scheduled tasks can run remotely even when the device is asleep.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "claude-team",
+      "attribute": "connectors",
+      "value": ["Google Drive", "Google Calendar", "Slack", "GitHub", "Microsoft 365", "MCP"],
+      "display": "Drive, Calendar, Slack, GitHub, Microsoft 365 and MCP",
+      "source_url": "https://claude.com/docs/connectors/getting-started",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Admins can manage organization-level connectors.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "claude-team",
+      "attribute": "training",
+      "value": false,
+      "display": "No, by default",
+      "source_url": "https://claude.com/pricing",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Claude for Work data is not used to train generative models by default.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "claude-team",
+      "attribute": "admin",
+      "value": "team_admin_no_audit_retention",
+      "display": "Central billing, roles, SSO, connector controls and usage analytics; no Team audit logs or custom retention",
+      "source_url": "https://claude.com/pricing",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Audit logs and custom retention are Enterprise features.",
+      "change_kind": "baseline"
+    },
+
+    {
+      "provider": "gemini-workspace",
+      "attribute": "price",
+      "value": {"currency": "USD", "amount": 14, "billing_period": "user/month", "commitment": "annual", "monthly_amount": 16.8, "promo": {"amount": 9.8, "description": "30% off for the first 3 months", "ends": "2026-10-07"}},
+      "display": "$14 USD/user/month annually; $16.80 monthly",
+      "source_url": "https://workspace.google.com/pricing.html",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Google Workspace Business Standard list price. A limited-time promotion is shown separately.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "gemini-workspace",
+      "attribute": "seat_minimum",
+      "value": 1,
+      "display": "1 user",
+      "source_url": "https://workspace.google.com/pricing.html",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Business editions support up to 300 users.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "gemini-workspace",
+      "attribute": "prerequisite",
+      "value": "google_workspace_business_standard",
+      "display": "Google Workspace Business Standard, included in this price",
+      "source_url": "https://workspace.google.com/blog/product-announcements/empowering-businesses-with-ai",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Gemini features are included in the Workspace edition rather than sold as a separate add-on.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "gemini-workspace",
+      "attribute": "mailbox_access",
+      "value": "gmail",
+      "display": "Gmail",
+      "source_url": "https://support.google.com/mail/answer/14355636",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Native mail features are built into Gmail.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "gemini-workspace",
+      "attribute": "mailbox_actions",
+      "value": "draft_only",
+      "display": "Drafts new messages and replies. You send and manage inbox actions.",
+      "source_url": "https://support.google.com/mail/answer/14355636",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Official guidance documents writing help, not autonomous label, archive or send actions.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "gemini-workspace",
+      "attribute": "unattended",
+      "value": "scheduled",
+      "display": "Yes, with scheduled actions",
+      "source_url": "https://support.google.com/gemini/answer/16316416?hl=en",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Scheduled actions can run recurring prompts such as unread-email summaries.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "gemini-workspace",
+      "attribute": "connectors",
+      "value": ["Google Drive", "Docs", "Calendar", "Tasks", "Keep", "GitHub"],
+      "display": "Drive, Docs, Calendar, Tasks, Keep and GitHub",
+      "source_url": "https://support.google.com/gemini/answer/14959807?hl=en",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Connected apps vary by Workspace account and admin settings.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "gemini-workspace",
+      "attribute": "training",
+      "value": false,
+      "display": "No, without permission",
+      "source_url": "https://workspace.google.com/security/ai-privacy/",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Workspace data is not used to train underlying models outside the domain without permission.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "gemini-workspace",
+      "attribute": "admin",
+      "value": "workspace_admin_audit_retention",
+      "display": "Admin console, access controls, Gemini audit logs and configurable conversation retention",
+      "source_url": "https://support.google.com/a/answer/14571493?hl=en",
+      "sources": [
+        "https://support.google.com/a/answer/14571493?hl=en",
+        "https://support.google.com/a/answer/14564320?hl=en"
+      ],
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Retention options depend on edition and admin configuration.",
+      "change_kind": "baseline"
+    },
+
+    {
+      "provider": "m365-copilot",
+      "attribute": "price",
+      "value": {"currency": "USD", "amount": 21, "billing_period": "user/month", "commitment": "annual", "monthly_amount": 25.2, "promo": {"amount": 18, "description": "Promotional annual price", "ends": "2026-09-30"}},
+      "display": "$21 USD/user/month annually; $25.20 monthly",
+      "source_url": "https://www.microsoft.com/en-us/microsoft-365-copilot/pricing",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Copilot Business list price. A limited-time promotion is shown separately.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "m365-copilot",
+      "attribute": "seat_minimum",
+      "value": 1,
+      "display": "1 user",
+      "source_url": "https://learn.microsoft.com/en-us/partner-center/announcements/2025-december",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Copilot Business supports organizations with up to 300 users.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "m365-copilot",
+      "attribute": "prerequisite",
+      "value": "qualifying_microsoft_365_plan",
+      "display": "A qualifying Microsoft 365 Business plan",
+      "source_url": "https://learn.microsoft.com/en-us/microsoft-365/copilot/microsoft-365-copilot-licensing",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Examples include Business Basic, Standard, Premium and Apps for business.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "m365-copilot",
+      "attribute": "mailbox_access",
+      "value": "outlook",
+      "display": "Outlook",
+      "source_url": "https://support.microsoft.com/en-us/outlook/frequently-asked-questions-about-copilot-in-outlook",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Copilot works with supported Exchange Online mailboxes.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "m365-copilot",
+      "attribute": "mailbox_actions",
+      "value": "outlook_actions_supervised_send",
+      "display": "Can prioritize, flag, archive, delete and draft. Sending stays supervised.",
+      "source_url": "https://support.microsoft.com/en-us/outlook/frequently-asked-questions-about-copilot-in-outlook",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Some actions require the supported Outlook client or configured agents.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "m365-copilot",
+      "attribute": "unattended",
+      "value": "scheduled",
+      "display": "Yes, with scheduled prompts; richer workflows need agent setup",
+      "source_url": "https://support.microsoft.com/en-us/microsoft-365-copilot/schedule-your-most-used-copilot-prompts",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Workflows can add triggers and actions where available.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "m365-copilot",
+      "attribute": "connectors",
+      "value": ["Teams", "SharePoint", "OneDrive", "Planner", "Microsoft Graph connectors"],
+      "display": "Teams, SharePoint, OneDrive, Planner and 100+ connectors",
+      "source_url": "https://www.microsoft.com/en-us/microsoft-365-copilot/business",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Connector access depends on licensing and admin configuration.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "m365-copilot",
+      "attribute": "training",
+      "value": false,
+      "display": "No",
+      "source_url": "https://learn.microsoft.com/en-us/copilot/faq",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Prompts, responses and Microsoft Graph data are not used to train foundation models.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "m365-copilot",
+      "attribute": "admin",
+      "value": "m365_admin_purview",
+      "display": "Microsoft 365 admin plus Purview audit, retention, eDiscovery and access controls",
+      "source_url": "https://learn.microsoft.com/en-us/microsoft-365/copilot/microsoft-365-copilot-architecture-data-protection-auditing",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Available controls depend on the underlying Microsoft 365 and Purview licences.",
+      "change_kind": "baseline"
+    },
+
+    {
+      "provider": "custom-build",
+      "attribute": "price",
+      "value": {"currency": "USD", "amount": null, "billing_period": "usage", "commitment": "none", "monthly_amount": null, "promo": null, "input_per_million": 5, "output_per_million": 30},
+      "display": "Usage-based, not per seat. GPT-5.6 Sol example: $5 input and $30 output per 1M tokens",
+      "source_url": "https://developers.openai.com/api/docs/models/gpt-5.6-sol",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Hosting, tools, integration development and support are additional.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "custom-build",
+      "attribute": "seat_minimum",
+      "value": 0,
+      "display": "No seat minimum",
+      "source_url": "https://developers.openai.com/api/docs/quickstart",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "API usage is metered rather than licensed per user.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "custom-build",
+      "attribute": "prerequisite",
+      "value": "api_and_implementation",
+      "display": "API billing, hosting, OAuth and implementation work",
+      "source_url": "https://developers.openai.com/api/docs/quickstart",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "This is a software project, not an off-the-shelf subscription.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "custom-build",
+      "attribute": "mailbox_access",
+      "value": "both",
+      "display": "Gmail and Outlook, when integrated",
+      "source_url": "https://developers.openai.com/api/docs/guides/tools-connectors-mcp",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "OpenAI supports Gmail and Outlook email connectors; direct mail APIs are also possible.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "custom-build",
+      "attribute": "mailbox_actions",
+      "value": "fully_configurable",
+      "display": "Configurable: label, archive, move, draft or send with chosen scopes and approvals",
+      "source_url": "https://developers.google.com/workspace/gmail/api/guides",
+      "sources": [
+        "https://developers.google.com/workspace/gmail/api/guides",
+        "https://learn.microsoft.com/en-us/graph/api/resources/mail-api-overview"
+      ],
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "The builder owns OAuth scopes, confirmation rules, monitoring and safeguards.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "custom-build",
+      "attribute": "unattended",
+      "value": "fully_configurable",
+      "display": "Yes, with a scheduler, event trigger or queue",
+      "source_url": "https://developers.openai.com/api/docs/guides/background",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "OpenAI background mode supports long-running responses; the surrounding scheduler is your responsibility.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "custom-build",
+      "attribute": "connectors",
+      "value": "arbitrary_apis_mcp",
+      "display": "Any suitable API or MCP server, plus built-in connectors",
+      "source_url": "https://developers.openai.com/api/docs/guides/tools-connectors-mcp",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Coverage is limited by available APIs, permissions and implementation effort.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "custom-build",
+      "attribute": "training",
+      "value": false,
+      "display": "No, by default",
+      "source_url": "https://platform.openai.com/docs/models/default-usage-policies-by-endpoint",
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "API data is not used for training unless the organization opts in. Retention controls vary by endpoint and eligibility.",
+      "change_kind": "baseline"
+    },
+    {
+      "provider": "custom-build",
+      "attribute": "admin",
+      "value": "platform_plus_application_controls",
+      "display": "API projects, roles, service accounts, budgets and audit logs; application governance must be built",
+      "source_url": "https://help.openai.com/en/articles/9186755-managing-projects-in-the-api-platform",
+      "sources": [
+        "https://help.openai.com/en/articles/9186755-managing-projects-in-the-api-platform",
+        "https://help.openai.com/en/articles/9687866-admin-and-audit-logs-api-for-the-api-platform"
+      ],
+      "confidence": "high",
+      "checked": "2026-07-29",
+      "last_changed": "2026-07-29",
+      "note": "Retention, access logging, user approvals and operational controls are shared between the platform and your application.",
+      "change_kind": "baseline"
+    }
+  ],
+  "changelog": [
+    {
+      "date": "2026-07-29",
+      "summary": "Baseline established from official vendor sources."
+    }
+  ]
+}

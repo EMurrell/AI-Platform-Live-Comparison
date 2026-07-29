@@ -1,0 +1,93 @@
+name: Refresh comparison
+
+on:
+  schedule:
+    - cron: "17 11 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: u7-ai-comparison-refresh
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the site
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Research official sources
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: gpt-5.6-sol
+        run: npm run research
+
+      - name: Validate, test and build
+        run: npm run check
+
+      - name: Commit confirmed updates
+        id: confirmed
+        run: |
+          git config user.name "u7-data-bot"
+          git config user.email "u7-data-bot@users.noreply.github.com"
+          git add data/current.json index.html
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "chore: refresh AI platform comparison"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Prepare reviewed-price branch
+        if: hashFiles('data/pending-price-review.json') != ''
+        id: price
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          REVIEW_ID=$(node -p "require('./data/pending-price-review.json').id")
+          BRANCH="price-review-${REVIEW_ID}"
+          echo "branch=${BRANCH}" >> "$GITHUB_OUTPUT"
+          if gh pr list --state open --head "${BRANCH}" --json number --jq 'length > 0' | grep -q true; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git switch -c "${BRANCH}"
+          npm run apply-price-review
+          npm run validate
+          npm run build
+          git add data/current.json index.html
+          git commit -m "review: confirm detected pricing change"
+          git push --set-upstream origin "${BRANCH}"
+          echo "exists=false" >> "$GITHUB_OUTPUT"
+
+      - name: Open price review
+        if: steps.price.outputs.branch != '' && steps.price.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr create \
+            --head "${{ steps.price.outputs.branch }}" \
+            --base "${{ github.event.repository.default_branch }}" \
+            --title "Review detected AI platform pricing change" \
+            --body "The daily source check found a pricing change. The public page still shows the last confirmed price with an **under review** notice. Merge this pull request only after a human confirms the official source."
+
+  stale-alert:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: refresh
+    steps:
+      - name: Report a failed refresh
+        if: needs.refresh.result == 'failure'
+        run: |
+          echo "::error::The comparison refresh failed. The visible last-updated date remains unchanged."

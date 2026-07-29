@@ -1,0 +1,15 @@
+{
+  "name": "u7-ai-platform-comparison",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "validate": "node scripts/validate.mjs",
+    "check-links": "node scripts/check-links.mjs",
+    "test": "node --test",
+    "research": "node scripts/research.mjs",
+    "apply-price-review": "node scripts/apply-price-review.mjs",
+    "check": "npm run validate && npm run build && npm test"
+  }
+}
