@@ -23,10 +23,14 @@ Then open `http://localhost:8000`.
 
 ## Refresh rules
 
-The public “Last updated on” date comes only from `last_successful_update`.
+The machine-generated seed is explicitly unverified. The public page does not show a “Last updated on” date until `seed_verified` is true and a complete pull has set `last_successful_update`.
 
 - A complete pull requires all 45 cells plus a Bank of Canada exchange rate.
-- A failed, partial or low-confidence pull keeps the previous values and timestamp.
+- A low-confidence or invalid cell keeps its previous value, preserves its previous `checked` date and increments `failed_checks`; valid sibling cells still update.
+- A provider failure affects only that provider's nine cells.
+- An exchange-rate failure retains the previous CAD rate but does not block cell updates.
+- Partial pulls commit successful cells and staleness state without advancing `last_successful_update`.
+- A total provider failure persists staleness state and then fails the workflow.
 - A successful no-change pull advances the timestamp.
 - A detected price change advances the successful-pull timestamp but leaves the last confirmed price live with an “under review” marker.
 - The review branch applies the proposed price. Merging its pull request publishes the confirmed change.

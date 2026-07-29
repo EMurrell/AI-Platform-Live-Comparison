@@ -39,7 +39,7 @@ for (const [index, cell] of data.cells.entries()) {
       if (!(field === "value" && cell.value === 0)) errors.push(`${key} is missing ${field}.`);
     }
   }
-  if (!["high", "medium", "low"].includes(cell.confidence)) errors.push(`${key} has invalid confidence.`);
+  if (!["high", "medium", "low", "unverified"].includes(cell.confidence)) errors.push(`${key} has invalid confidence.`);
   if (!isOfficial(cell.source_url)) errors.push(`${key} uses a non-official source: ${cell.source_url}`);
   for (const source of cell.sources ?? []) {
     if (!isOfficial(source)) errors.push(`${key} uses a non-official supporting source: ${source}`);
@@ -62,8 +62,18 @@ for (const provider of data.providers) {
   }
 }
 
-if (!data.last_successful_update || Number.isNaN(new Date(data.last_successful_update).getTime())) {
-  errors.push("last_successful_update must be a valid timestamp.");
+if (typeof data.seed_verified !== "boolean") {
+  errors.push("seed_verified must be true or false.");
+}
+
+if (
+  data.last_successful_update !== null
+  && (
+    typeof data.last_successful_update !== "string"
+    || Number.isNaN(new Date(data.last_successful_update).getTime())
+  )
+) {
+  errors.push("last_successful_update must be null or a valid timestamp.");
 }
 
 if (!data.fx?.rate || !data.fx?.date || !data.fx?.source_url) {

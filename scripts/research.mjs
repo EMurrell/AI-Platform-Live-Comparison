@@ -145,14 +145,20 @@ await writeFile(dataPath, `${JSON.stringify(merged.data, null, 2)}\n`);
 
 if (merged.pending) {
   await writeFile(pendingPath, `${JSON.stringify(merged.pending, null, 2)}\n`);
-  console.log(`Complete pull passed. ${merged.pending.proposals.length} price change(s) held for review as ${merged.pending.id}.`);
-} else if (merged.complete) {
+  console.log(`${merged.pending.proposals.length} price change(s) held for review as ${merged.pending.id}.`);
+} else {
   await unlink(pendingPath).catch(error => {
     if (error.code !== "ENOENT") throw error;
   });
+}
+
+if (merged.complete) {
   console.log("Complete pull passed. Last successful update advanced.");
 } else {
-  console.warn("Pull incomplete. Previous values and last successful update were retained.");
+  console.warn(`::warning::Partial comparison refresh: ${merged.acceptedCells} of ${current.cells.length} cells passed. Successful cells and staleness state will be committed; the last successful update remains unchanged.`);
   for (const item of merged.errors) console.warn(`- ${item.provider}: ${item.errors.join(" ")}`);
-  process.exitCode = 1;
+  if (merged.totalFailure) {
+    console.error("::error::Total research failure: no provider cells passed validation.");
+    process.exitCode = 1;
+  }
 }

@@ -23,38 +23,56 @@ export function officialSource(url, domains) {
   }
 }
 
+function cellErrors(cell, provider, attribute) {
+  const errors = [];
+  for (const field of ["attribute", "value", "display", "source_url", "confidence", "note"]) {
+    if (!(field in cell) || cell[field] === "" || cell[field] === null || cell[field] === undefined) {
+      if (!(field === "value" && cell.value === 0)) errors.push(`${attribute.id} is missing ${field}.`);
+    }
+  }
+  if (!["high", "medium", "low"].includes(cell.confidence)) errors.push(`${attribute.id} has invalid confidence.`);
+  if (!officialSource(cell.source_url, provider.official_domains)) errors.push(`${attribute.id} has a non-official source.`);
+  for (const source of cell.sources ?? []) {
+    if (!officialSource(source, provider.official_domains)) errors.push(`${attribute.id} has a non-official supporting source.`);
+  }
+  if (attribute.id === PRICE_ATTRIBUTE) {
+    if (!cell.value || typeof cell.value !== "object" || Array.isArray(cell.value)) {
+      errors.push("price must have a structured value.");
+    } else {
+      for (const field of ["currency", "amount", "billing_period", "commitment", "monthly_amount", "promo"]) {
+        if (!(field in cell.value)) errors.push(`price is missing ${field}.`);
+      }
+    }
+  }
+  return errors;
+}
+
 export function resultErrors(result, provider, attributes) {
   if (!result?.ok) return [result?.error || "Research job did not complete."];
   if (!Array.isArray(result.cells)) return ["Research result has no cells array."];
   const errors = [];
-  const byAttribute = new Map(result.cells.map(cell => [cell.attribute, cell]));
-  if (result.cells.length !== attributes.length) errors.push(`Expected ${attributes.length} cells, found ${result.cells.length}.`);
+  const expected = new Set(attributes.map(attribute => attribute.id));
+  const byAttribute = new Map();
+  for (const cell of result.cells) {
+    if (!expected.has(cell.attribute)) {
+      errors.push(`Unexpected ${cell.attribute || "unnamed"} cell.`);
+      continue;
+    }
+    const matches = byAttribute.get(cell.attribute) ?? [];
+    matches.push(cell);
+    byAttribute.set(cell.attribute, matches);
+  }
   for (const attribute of attributes) {
-    const cell = byAttribute.get(attribute.id);
-    if (!cell) {
+    const matches = byAttribute.get(attribute.id) ?? [];
+    if (matches.length === 0) {
       errors.push(`Missing ${attribute.id}.`);
       continue;
     }
-    for (const field of ["attribute", "value", "display", "source_url", "confidence", "note"]) {
-      if (!(field in cell) || cell[field] === "" || cell[field] === null || cell[field] === undefined) {
-        if (!(field === "value" && cell.value === 0)) errors.push(`${attribute.id} is missing ${field}.`);
-      }
+    if (matches.length > 1) {
+      errors.push(`Duplicate ${attribute.id}.`);
+      continue;
     }
-    if (cell.confidence === "low") errors.push(`${attribute.id} has low confidence.`);
-    if (!["high", "medium", "low"].includes(cell.confidence)) errors.push(`${attribute.id} has invalid confidence.`);
-    if (!officialSource(cell.source_url, provider.official_domains)) errors.push(`${attribute.id} has a non-official source.`);
-    for (const source of cell.sources ?? []) {
-      if (!officialSource(source, provider.official_domains)) errors.push(`${attribute.id} has a non-official supporting source.`);
-    }
-    if (attribute.id === PRICE_ATTRIBUTE) {
-      if (!cell.value || typeof cell.value !== "object" || Array.isArray(cell.value)) {
-        errors.push("price must have a structured value.");
-      } else {
-        for (const field of ["currency", "amount", "billing_period", "commitment", "monthly_amount", "promo"]) {
-          if (!(field in cell.value)) errors.push(`price is missing ${field}.`);
-        }
-      }
-    }
+    errors.push(...cellErrors(matches[0], provider, attribute));
   }
   return errors;
 }
@@ -77,48 +95,68 @@ function pendingId(proposals) {
 export function mergeResearch(current, providerResults, fxResult, timestamp) {
   const next = clone(current);
   const resultByProvider = new Map(providerResults.map(result => [result.provider, result]));
-  const errors = [];
-
-  for (const provider of current.providers) {
-    const providerErrors = resultErrors(resultByProvider.get(provider.id), provider, current.attributes);
-    if (providerErrors.length) errors.push({ provider: provider.id, errors: providerErrors });
-  }
-  if (!fxResult?.ok || !Number.isFinite(fxResult.rate) || !fxResult.date || !fxResult.source_url) {
-    errors.push({ provider: "bank-of-canada", errors: [fxResult?.error || "Exchange-rate check failed."] });
-  }
-
-  if (errors.length) {
-    const lowConfidenceCells = new Set(providerResults.flatMap(result =>
-      (result.cells ?? [])
-        .filter(cell => cell.confidence === "low")
-        .map(cell => `${result.provider}:${cell.attribute}`)
-    ));
-    const structurallyFailedProviders = new Set(errors
-      .filter(item => item.provider !== "bank-of-canada" && item.errors.some(error => !error.includes("has low confidence")))
-      .map(item => item.provider));
-    next.cells = next.cells.map(cell => {
-      const key = `${cell.provider}:${cell.attribute}`;
-      if (!structurallyFailedProviders.has(cell.provider) && !lowConfidenceCells.has(key)) return cell;
-      return {
-        ...cell,
-        status: "unconfirmed_today",
-        failed_checks: (cell.failed_checks ?? 0) + 1
-      };
-    });
-    return { data: next, complete: false, errors, pending: null };
-  }
-
   const today = dateOnly(timestamp);
   const oldCells = new Map(current.cells.map(cell => [`${cell.provider}:${cell.attribute}`, cell]));
+  const errorsByProvider = new Map();
   const pending = [];
   const mergedCells = [];
+  let acceptedCells = 0;
+
+  function addError(provider, error) {
+    const errors = errorsByProvider.get(provider) ?? [];
+    errors.push(error);
+    errorsByProvider.set(provider, errors);
+  }
+
+  function retainUnconfirmed(oldCell) {
+    return {
+      ...oldCell,
+      status: "unconfirmed_today",
+      failed_checks: (oldCell.failed_checks ?? 0) + 1
+    };
+  }
 
   for (const provider of current.providers) {
     const result = resultByProvider.get(provider.id);
-    const freshCells = new Map(result.cells.map(cell => [cell.attribute, cell]));
+    if (!result?.ok || !Array.isArray(result.cells)) {
+      addError(provider.id, result?.error || "Research job did not return a cells array.");
+      for (const attribute of current.attributes) {
+        mergedCells.push(retainUnconfirmed(oldCells.get(`${provider.id}:${attribute.id}`)));
+      }
+      continue;
+    }
+
+    const expectedAttributes = new Set(current.attributes.map(attribute => attribute.id));
+    const freshCells = new Map();
+    for (const cell of result.cells) {
+      if (!expectedAttributes.has(cell.attribute)) {
+        addError(provider.id, `Unexpected ${cell.attribute || "unnamed"} cell.`);
+        continue;
+      }
+      const matches = freshCells.get(cell.attribute) ?? [];
+      matches.push(cell);
+      freshCells.set(cell.attribute, matches);
+    }
+
     for (const attribute of current.attributes) {
       const oldCell = oldCells.get(`${provider.id}:${attribute.id}`);
-      const fresh = freshCells.get(attribute.id);
+      const matches = freshCells.get(attribute.id) ?? [];
+      if (matches.length !== 1) {
+        addError(provider.id, matches.length === 0 ? `Missing ${attribute.id}.` : `Duplicate ${attribute.id}.`);
+        mergedCells.push(retainUnconfirmed(oldCell));
+        continue;
+      }
+
+      const fresh = matches[0];
+      const structuralErrors = cellErrors(fresh, provider, attribute);
+      if (structuralErrors.length || fresh.confidence === "low") {
+        for (const error of structuralErrors) addError(provider.id, error);
+        if (fresh.confidence === "low") addError(provider.id, `${attribute.id} has low confidence.`);
+        mergedCells.push(retainUnconfirmed(oldCell));
+        continue;
+      }
+
+      acceptedCells += 1;
       const changed = !sameValue(oldCell.value, fresh.value);
       const common = {
         provider: provider.id,
@@ -139,8 +177,7 @@ export function mergeResearch(current, providerResults, fxResult, timestamp) {
         const retained = {
           ...oldCell,
           checked: today,
-          confidence: fresh.confidence,
-          status: "confirmed_price_under_review",
+          status: "price_under_review",
           pending_review: {
             proposed_display: fresh.display,
             proposed_source_url: fresh.source_url,
@@ -156,19 +193,45 @@ export function mergeResearch(current, providerResults, fxResult, timestamp) {
   }
 
   next.cells = mergedCells;
-  next.fx = {
-    pair: "USD/CAD",
-    rate: fxResult.rate,
-    date: fxResult.date,
-    source_url: fxResult.source_url
-  };
-  next.last_successful_update = timestamp;
-  next.method = "Official vendor sources checked by the automated research workflow. USD converted with the Bank of Canada daily exchange rate.";
+  if (fxResult?.ok && Number.isFinite(fxResult.rate) && fxResult.date && fxResult.source_url) {
+    next.fx = {
+      pair: "USD/CAD",
+      rate: fxResult.rate,
+      date: fxResult.date,
+      source_url: fxResult.source_url
+    };
+  } else {
+    addError("bank-of-canada", fxResult?.error || "Exchange-rate check failed.");
+    next.fx = {
+      ...current.fx,
+      status: "unconfirmed_today",
+      failed_checks: (current.fx.failed_checks ?? 0) + 1
+    };
+  }
+
+  const errors = [...errorsByProvider].map(([provider, providerErrors]) => ({
+    provider,
+    errors: providerErrors
+  }));
+  const complete = errors.length === 0;
+  if (complete) {
+    next.last_successful_update = timestamp;
+    next.method = next.seed_verified
+      ? "Official vendor sources checked by the automated research workflow. USD converted with the Bank of Canada daily exchange rate."
+      : "Automated research completed against official vendor sources. Human verification of the original seed is still outstanding.";
+  }
 
   const pendingFile = pending.length
     ? { id: pendingId(pending), detected: today, proposals: pending }
     : null;
-  return { data: next, complete: true, errors: [], pending: pendingFile };
+  return {
+    data: next,
+    complete,
+    totalFailure: acceptedCells === 0,
+    acceptedCells,
+    errors,
+    pending: pendingFile
+  };
 }
 
 export function applyPriceReview(current, review) {
