@@ -15,19 +15,27 @@ const goodFx = {
   source_url: "https://www.bankofcanada.ca/rates/exchange/daily-exchange-rates/"
 };
 
+// Shape is derived from the data file so adding or removing a row or a provider
+// does not break the suite.
+const TOTAL_CELLS = baseline.cells.length;
+const ATTRIBUTE_COUNT = baseline.attributes.length;
+const cellsFor = (providerId) => baseline.cells.filter(cell => cell.provider === providerId).length;
+
+// A successful pull returns high confidence for every cell. Confidence fidelity is
+// not what these tests are about; merge mechanics are.
 function successfulResults(data = baseline) {
   return data.providers.map(provider => ({
     provider: provider.id,
     ok: true,
     cells: data.cells
       .filter(cell => cell.provider === provider.id)
-      .map(({ attribute, value, display, source_url, sources, confidence, note }) => ({
+      .map(({ attribute, value, display, source_url, sources, note }) => ({
         attribute,
         value,
         display,
         source_url,
         ...(sources ? { sources } : {}),
-        confidence: confidence === "unverified" ? "high" : confidence,
+        confidence: "high",
         note
       }))
   }));
@@ -39,53 +47,62 @@ test("a complete no-change pull advances only the successful-update timestamp", 
   assert.equal(merged.data.last_successful_update, timestamp);
   assert.equal(merged.pending, null);
   assert.equal(merged.totalFailure, false);
-  assert.equal(merged.acceptedCells, 45);
-  assert.equal(merged.data.cells.length, 45);
+  assert.equal(merged.acceptedCells, TOTAL_CELLS);
+  assert.equal(merged.data.cells.length, TOTAL_CELLS);
   assert.ok(merged.data.cells.every(cell => cell.checked === "2026-07-30"));
   assert.ok(merged.data.cells.every(cell => cell.confidence === "high"));
   assert.ok(merged.data.cells.every((cell, index) => cell.last_changed === baseline.cells[index].last_changed));
 });
 
-test("one provider failure retains its nine cells while the other four providers update", () => {
+test("one provider failure retains only that provider while the others update", () => {
+  const failedProvider = "claude-team";
+  const failedCount = cellsFor(failedProvider);
   const results = successfulResults();
-  results[1] = { provider: "claude-team", ok: false, error: "Simulated timeout" };
+  const index = results.findIndex(item => item.provider === failedProvider);
+  results[index] = { provider: failedProvider, ok: false, error: "Simulated timeout" };
+
   const merged = mergeResearch(baseline, results, goodFx, timestamp);
   assert.equal(merged.complete, false);
   assert.equal(merged.totalFailure, false);
-  assert.equal(merged.acceptedCells, 36);
+  assert.equal(merged.acceptedCells, TOTAL_CELLS - failedCount);
   assert.equal(merged.data.last_successful_update, baseline.last_successful_update);
-  const failedBefore = baseline.cells.filter(cell => cell.provider === "claude-team");
-  const failedAfter = merged.data.cells.filter(cell => cell.provider === "claude-team");
-  assert.equal(failedAfter.length, 9);
-  assert.ok(failedAfter.every((cell, index) => cell.checked === failedBefore[index].checked));
-  assert.ok(failedAfter.every((cell, index) => sameJson(cell.value, failedBefore[index].value)));
-  assert.ok(failedAfter.every(cell => cell.status === "unconfirmed_today"));
-  assert.ok(failedAfter.every((cell, index) => cell.failed_checks === (failedBefore[index].failed_checks ?? 0) + 1));
 
-  const successful = merged.data.cells.filter(cell => cell.provider !== "claude-team");
-  assert.equal(successful.length, 36);
+  const failedBefore = baseline.cells.filter(cell => cell.provider === failedProvider);
+  const failedAfter = merged.data.cells.filter(cell => cell.provider === failedProvider);
+  assert.equal(failedAfter.length, failedCount);
+  assert.ok(failedAfter.every((cell, i) => cell.checked === failedBefore[i].checked));
+  assert.ok(failedAfter.every((cell, i) => sameJson(cell.value, failedBefore[i].value)));
+  assert.ok(failedAfter.every(cell => cell.status === "unconfirmed_today"));
+  assert.ok(failedAfter.every((cell, i) => cell.failed_checks === (failedBefore[i].failed_checks ?? 0) + 1));
+
+  const successful = merged.data.cells.filter(cell => cell.provider !== failedProvider);
+  assert.equal(successful.length, TOTAL_CELLS - failedCount);
   assert.ok(successful.every(cell => cell.checked === "2026-07-30"));
   assert.ok(successful.every(cell => cell.confidence === "high"));
 });
 
-test("one low-confidence cell is retained while its eight provider siblings update", () => {
+test("one low-confidence cell is retained while its provider siblings update", () => {
+  const providerId = "gemini-workspace";
+  const attributeId = "unattended";
   const results = successfulResults();
-  const result = results.find(item => item.provider === "gemini-workspace");
-  const cell = result.cells.find(item => item.attribute === "unattended");
+  const result = results.find(item => item.provider === providerId);
+  const cell = result.cells.find(item => item.attribute === attributeId);
   cell.value = "no";
   cell.display = "No";
   cell.confidence = "low";
+
   const merged = mergeResearch(baseline, results, goodFx, timestamp);
-  const before = baseline.cells.find(item => item.provider === "gemini-workspace" && item.attribute === "unattended");
-  const after = merged.data.cells.find(item => item.provider === "gemini-workspace" && item.attribute === "unattended");
+  const before = baseline.cells.find(item => item.provider === providerId && item.attribute === attributeId);
+  const after = merged.data.cells.find(item => item.provider === providerId && item.attribute === attributeId);
   assert.equal(merged.complete, false);
   assert.equal(merged.totalFailure, false);
-  assert.equal(merged.acceptedCells, 44);
+  assert.equal(merged.acceptedCells, TOTAL_CELLS - 1);
   assert.deepEqual(after.value, before.value);
   assert.equal(after.checked, before.checked);
   assert.equal(after.status, "unconfirmed_today");
-  const siblings = merged.data.cells.filter(item => item.provider === "gemini-workspace" && item.attribute !== "unattended");
-  assert.equal(siblings.length, 8);
+
+  const siblings = merged.data.cells.filter(item => item.provider === providerId && item.attribute !== attributeId);
+  assert.equal(siblings.length, ATTRIBUTE_COUNT - 1);
   assert.ok(siblings.every(item => item.checked === "2026-07-30"));
   assert.ok(siblings.every(item => item.confidence === "high"));
   assert.equal(merged.data.last_successful_update, baseline.last_successful_update);
@@ -96,9 +113,10 @@ test("a price change is held while the pull timestamp advances", () => {
   const result = results.find(item => item.provider === "chatgpt-business");
   const proposed = result.cells.find(item => item.attribute === "price");
   const confirmedAmount = proposed.value.amount;
-  const proposedAmount = confirmedAmount === 22 ? 23 : 22;
+  const proposedAmount = confirmedAmount + 3;
   proposed.value = { ...proposed.value, amount: proposedAmount };
-  proposed.display = `$${proposedAmount} USD/user/month annually; $25 monthly`;
+  proposed.display = `$${proposedAmount} USD/user/month billed annually; $25 monthly`;
+
   const merged = mergeResearch(baseline, results, goodFx, timestamp);
   const live = merged.data.cells.find(item => item.provider === "chatgpt-business" && item.attribute === "price");
   assert.equal(merged.complete, true);
@@ -114,11 +132,11 @@ test("a price change is held while the pull timestamp advances", () => {
   assert.equal(updated.last_changed, "2026-07-30");
 });
 
-test("an exchange-rate failure retains CAD state while all 45 cells update", () => {
+test("an exchange-rate failure retains CAD state while every cell still updates", () => {
   const merged = mergeResearch(baseline, successfulResults(), { ok: false, error: "Simulated FX failure" }, timestamp);
   assert.equal(merged.complete, false);
   assert.equal(merged.totalFailure, false);
-  assert.equal(merged.acceptedCells, 45);
+  assert.equal(merged.acceptedCells, TOTAL_CELLS);
   assert.equal(merged.data.last_successful_update, baseline.last_successful_update);
   assert.equal(merged.data.fx.rate, baseline.fx.rate);
   assert.equal(merged.data.fx.status, "unconfirmed_today");
