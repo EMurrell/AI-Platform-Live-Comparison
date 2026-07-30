@@ -195,6 +195,18 @@ h1 {
   padding-block: 56px 88px;
 }
 
+.comparison--personal {
+  padding-top: 0;
+}
+
+.comparison__heading {
+  margin: 0 0 16px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
 .scroll-hint {
   display: none;
   margin: 0 0 14px;
@@ -320,6 +332,8 @@ tbody td:last-child {
   color: var(--grey);
   font-size: 0.7rem;
   line-height: 1.38;
+  /* Several notes name a long vendor URL, which otherwise spills into the next column. */
+  overflow-wrap: break-word;
 }
 
 .cell__chip {
@@ -332,6 +346,36 @@ tbody td:last-child {
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+/* The personal table is a supporting note to the main one, so it runs at a
+   smaller scale and a lighter header. Same structure and semantics otherwise. */
+.comparison--personal table {
+  min-width: 820px;
+}
+
+.comparison--personal thead th {
+  height: 96px;
+  padding: 18px 16px 15px;
+  background: var(--purple-medium);
+  font-size: 0.86rem;
+}
+
+.comparison--personal .attribute-head {
+  background: var(--purple);
+}
+
+.comparison--personal .attribute {
+  padding: 18px 16px;
+  font-size: 0.86rem;
+}
+
+.comparison--personal .cell {
+  padding: 17px 16px 15px;
+}
+
+.comparison--personal .cell__answer {
+  font-size: 0.81rem;
 }
 
 footer {
@@ -427,6 +471,10 @@ footer p {
     min-width: 880px;
   }
 
+  .comparison--personal table {
+    min-width: 800px;
+  }
+
   .attribute-head,
   .attribute {
     width: 160px;
@@ -463,7 +511,8 @@ footer p {
     box-shadow: none;
   }
 
-  table {
+  table,
+  .comparison--personal table {
     min-width: 0;
     font-size: 8pt;
   }
@@ -474,10 +523,16 @@ footer p {
   }
 
   thead th,
-  .attribute-head {
+  .attribute-head,
+  .comparison--personal thead th,
+  .comparison--personal .attribute-head {
     border-bottom: 1px solid var(--purple-dark);
     background: white;
     color: var(--purple-dark);
+  }
+
+  .comparison--personal {
+    break-before: page;
   }
 
   .provider-vendor {
@@ -624,6 +679,142 @@ footer p {
                 <p class="cell__answer">No.</p>
                 <a class="source-link" href="https://learn.microsoft.com/en-us/microsoft-365/copilot/enterprise-data-protection" target="_blank" rel="noopener noreferrer">Source</a>
                 <p class="cell__note">Prompts, responses and Microsoft Graph data are excluded under enterprise data protection.</p>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="attribute">Admin control</th>
+              <td class="cell">
+                <p class="cell__answer">Owners and admins manage members and seats. Removing someone revokes access immediately and reassigns their projects and GPTs to an owner.</p>
+                <a class="source-link" href="https://help.openai.com/en/articles/8266418-data-retention-when-a-member-is-removed-from-a-workspace" target="_blank" rel="noopener noreferrer">Source</a>
+                <p class="cell__note">Chats and files in a Business workspace are retained indefinitely, and a removed member&#039;s conversations are not visible to the owner. App and connector admin controls are covered at help.openai.com/en/articles/11509118-admin-controls-security-and-compliance-in-apps-enterprise-edu-and-business</p>
+              </td>
+              <td class="cell">
+                <p class="cell__answer">Owners and admins manage members and seats. Removing a member frees the seat; their history returns if the same email is re-added.</p>
+                <a class="source-link" href="https://support.claude.com/en/articles/13133750-manage-members-on-team-and-enterprise-plans" target="_blank" rel="noopener noreferrer">Source</a>
+                <p class="cell__note">Only owners and primary owners reach billing. Connectors must be enabled for the organization by an owner before members can use them, per support.claude.com/en/articles/11176164-use-connectors-to-extend-claude-s-capabilities</p>
+              </td>
+              <td class="cell">
+                <p class="cell__answer">An admin turns Gemini on or off per Workspace service and per group. It is on by default.</p>
+                <a class="source-link" href="https://knowledge.workspace.google.com/admin/generative-ai/workspace-with-gemini/manage-access-to-gemini-features-in-workspace-services" target="_blank" rel="noopener noreferrer">Source</a>
+                <p class="cell__note">Changing the setting needs the Gemini settings administrator privilege. When someone leaves, an admin can move their data to another account and delete the original, per knowledge.workspace.google.com/admin/users/maintain-data-security-after-an-employee-leaves</p>
+              </td>
+              <td class="cell">
+                <p class="cell__answer">An AI Administrator configures Copilot for the whole tenant in the Microsoft 365 admin center; a Global Reader can view the settings.</p>
+                <a class="source-link" href="https://learn.microsoft.com/en-us/microsoft-365/copilot/microsoft-365-copilot-page" target="_blank" rel="noopener noreferrer">Source</a>
+                <p class="cell__note">The admin center only shows services licensed in your tenant, so which Copilot settings appear depends on the licences you hold.</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="comparison comparison--personal shell" id="personal">
+      <h2 class="comparison__heading">Personal plans compared</h2>
+      <p class="scroll-hint">Swipe sideways to see all platforms</p>
+      <div class="table-frame" role="region" aria-label="Personal AI subscription comparison" tabindex="0">
+        <table>
+          <caption class="visually-hidden">Comparison of four personal AI subscriptions across price, data training, work email support, and admin control</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="attribute-head">What to compare</th>
+              <th scope="col"><span class="provider-vendor">OpenAI</span>ChatGPT Plus</th>
+              <th scope="col"><span class="provider-vendor">Anthropic</span>Claude Pro</th>
+              <th scope="col"><span class="provider-vendor">Google</span>Google AI Pro</th>
+              <th scope="col"><span class="provider-vendor">Microsoft</span>Microsoft 365 Personal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="attribute">Price</th>
+              <td class="cell">
+                <p class="cell__answer">$20/month, billed monthly.</p>
+                <a class="source-link" href="https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus" target="_blank" rel="noopener noreferrer">Source</a>
+                <p class="cell__note">The article states no currency. OpenAI says purchases are in US dollars with local-currency billing in a limited set of countries, that annual billing is not offered for Go, Plus or Pro, and that a lower-cost Go plan is sold in every supported country, at help.openai.com/en/articles/11989085-what-is-chatgpt-go</p>
+              </td>
+              <td class="cell">
+                <p class="cell__answer">$17/month with an annual subscription ($200 up front), $20 billed monthly.</p>
+                <a class="source-link" href="https://claude.com/pricing" target="_blank" rel="noopener noreferrer">Source</a>
+                <p class="cell__note">Currency not stated on vendor page for Canadian customers.</p>
+              </td>
+              <td class="cell">
+                <p class="cell__answer">CAD $26.99/month</p>
+                <a class="source-link" href="https://one.google.com/about/google-ai-plans/" target="_blank" rel="noopener noreferrer">Source</a>
+                <p class="cell__note">The page renders its prices with scripts, so the daily check cannot watch this figure; it was read from the Canadian view of the page on 30 July 2026. Google shows monthly billing only.</p>
+              </td>
+              <td class="cell">
+                <p class="cell__answer">CAD $115.00/year, or CAD $11.50/month</p>
+                <a class="source-link" href="https://www.microsoft.com/en-ca/microsoft-365/buy/compare-all-microsoft-365-products" target="_blank" rel="noopener noreferrer">Source</a>
+                <p class="cell__note">Copilot is included in the plan. Microsoft sells Family and Premium plans on the same page.</p>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="attribute">Data used for training</th>
+              <td class="cell">
+                <p class="cell__answer">Yes, unless you opt out.</p>
+                <a class="source-link" href="https://help.openai.com/en/articles/5722486-how-your-data-is-used-to-improve-model-performance" target="_blank" rel="noopener noreferrer">Source</a>
+                <p class="cell__note">Turn it off under Settings, Data Controls. The same page says OpenAI does not train on business plans by default, and that temporary chats are never used for training.</p>
+              </td>
+              <td class="cell">
+                <p class="cell__answer">Only if you turn on model improvement in your privacy settings.</p>
+                <a class="source-link" href="https://privacy.claude.com/en/articles/10023580-is-my-data-used-for-model-training" target="_blank" rel="noopener noreferrer">Source</a>
+                <p class="cell__note">Conversations flagged for safety review may still be used; incognito chats are not. The plan comparison table on claude.com/pricing labels this row &quot;Opt-out&quot; for the personal plans.</p>
+              </td>
+              <td class="cell">
+                <p class="cell__answer">Yes, unless you turn off Keep Activity.</p>
+                <a class="source-link" href="https://support.google.com/gemini/answer/13594961" target="_blank" rel="noopener noreferrer">Source</a>
+                <p class="cell__note">With Keep Activity off, chats are still kept for 72 hours, and chats already seen by human reviewers are kept for up to three years.</p>
+              </td>
+              <td class="cell">
+                <p class="cell__answer">No.</p>
+                <a class="source-link" href="https://support.microsoft.com/en-us/privacy/copilot-in-microsoft-365-apps-for-home-your-data-and-privacy" target="_blank" rel="noopener noreferrer">Source</a>
+                <p class="cell__note">This covers Copilot inside Word, Excel, Outlook and the other Microsoft 365 apps. The separate Copilot app and copilot.microsoft.com do use conversations for model training unless you opt out, per support.microsoft.com/en-us/microsoft-copilot/privacy-faq-for-microsoft-copilot</p>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="attribute">Works with your work email</th>
+              <td class="cell">
+                <p class="cell__answer">Connecting an Outlook mailbox needs your employer&#039;s Microsoft Entra admin to approve the app&#039;s permissions.</p>
+                <a class="source-link" href="https://help.openai.com/en/articles/12512241-outlook-email-and-calendar-app-for-chatgpt" target="_blank" rel="noopener noreferrer">Source</a>
+                <p class="cell__note">Which apps you get depends on your plan, workspace settings, role and region, per help.openai.com/en/articles/12084614-plugin-use-cases-and-prompts</p>
+              </td>
+              <td class="cell">
+                <p class="cell__answer">Connects to Gmail and drafts, but cannot send. If the mailbox is a Google Workspace account, your employer&#039;s admin may have to allow Claude first.</p>
+                <a class="source-link" href="https://support.claude.com/en/articles/10166901-use-google-workspace-connectors" target="_blank" rel="noopener noreferrer">Source</a>
+                <p class="cell__note">Outlook connects through a separate Microsoft 365 connector, set up at support.claude.com/en/articles/12542951-set-up-the-microsoft-365-connector</p>
+              </td>
+              <td class="cell">
+                <p class="cell__answer">On a work or school Google account, access must be enabled by your employer&#039;s Workspace administrator.</p>
+                <a class="source-link" href="https://support.google.com/gemini/answer/14620100" target="_blank" rel="noopener noreferrer">Source</a>
+                <p class="cell__note">Feature availability and data handling on a work account follow the employer&#039;s Workspace licence, not a personal Google AI Pro subscription.</p>
+              </td>
+              <td class="cell">
+                <p class="cell__answer">Covers a personal Microsoft account, for example an outlook.com address.</p>
+                <a class="source-link" href="https://support.microsoft.com/en-us/privacy/copilot-in-microsoft-365-apps-for-home-your-data-and-privacy" target="_blank" rel="noopener noreferrer">Source</a>
+                <p class="cell__note">Copilot in Microsoft 365 apps for work or school is a separate product with its own data protections.</p>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="attribute">Admin control</th>
+              <td class="cell">
+                <p class="cell__answer">Admin controls for managing users, roles and access are listed as ChatGPT Business features.</p>
+                <a class="source-link" href="https://help.openai.com/en/articles/8792828-what-is-chatgpt-business" target="_blank" rel="noopener noreferrer">Source</a>
+                <p class="cell__note">Documented for the business plan. This cell links to that page rather than quoting a claim about the personal plan, so the daily check does not watch it.</p>
+              </td>
+              <td class="cell">
+                <p class="cell__answer">Single sign-on, central billing and admin controls for connectors are listed in the Team and Enterprise comparison.</p>
+                <a class="source-link" href="https://claude.com/pricing" target="_blank" rel="noopener noreferrer">Source</a>
+                <p class="cell__note">Documented for the business plans. This cell links to that page rather than quoting a claim about the personal plan, so the daily check does not watch it.</p>
+              </td>
+              <td class="cell">
+                <p class="cell__answer">Turning Gemini on or off per service and per group is a Google Workspace administrator setting.</p>
+                <a class="source-link" href="https://knowledge.workspace.google.com/admin/generative-ai/workspace-with-gemini/manage-access-to-gemini-features-in-workspace-services" target="_blank" rel="noopener noreferrer">Source</a>
+                <p class="cell__note">Documented for the business plans. This cell links to that page rather than quoting a claim about the personal plan, so the daily check does not watch it.</p>
+              </td>
+              <td class="cell">
+                <p class="cell__answer">Tenant-wide Copilot settings live in the Microsoft 365 admin center, which serves business subscriptions.</p>
+                <a class="source-link" href="https://learn.microsoft.com/en-us/microsoft-365/copilot/microsoft-365-copilot-page" target="_blank" rel="noopener noreferrer">Source</a>
+                <p class="cell__note">Documented for the business plans. This cell links to that page rather than quoting a claim about the personal plan, so the daily check does not watch it.</p>
               </td>
             </tr>
           </tbody>

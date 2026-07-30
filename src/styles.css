@@ -184,6 +184,18 @@ h1 {
   padding-block: 56px 88px;
 }
 
+.comparison--personal {
+  padding-top: 0;
+}
+
+.comparison__heading {
+  margin: 0 0 16px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
 .scroll-hint {
   display: none;
   margin: 0 0 14px;
@@ -309,6 +321,8 @@ tbody td:last-child {
   color: var(--grey);
   font-size: 0.7rem;
   line-height: 1.38;
+  /* Several notes name a long vendor URL, which otherwise spills into the next column. */
+  overflow-wrap: break-word;
 }
 
 .cell__chip {
@@ -321,6 +335,36 @@ tbody td:last-child {
   font-weight: 800;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+/* The personal table is a supporting note to the main one, so it runs at a
+   smaller scale and a lighter header. Same structure and semantics otherwise. */
+.comparison--personal table {
+  min-width: 820px;
+}
+
+.comparison--personal thead th {
+  height: 96px;
+  padding: 18px 16px 15px;
+  background: var(--purple-medium);
+  font-size: 0.86rem;
+}
+
+.comparison--personal .attribute-head {
+  background: var(--purple);
+}
+
+.comparison--personal .attribute {
+  padding: 18px 16px;
+  font-size: 0.86rem;
+}
+
+.comparison--personal .cell {
+  padding: 17px 16px 15px;
+}
+
+.comparison--personal .cell__answer {
+  font-size: 0.81rem;
 }
 
 footer {
@@ -416,6 +460,10 @@ footer p {
     min-width: 880px;
   }
 
+  .comparison--personal table {
+    min-width: 800px;
+  }
+
   .attribute-head,
   .attribute {
     width: 160px;
@@ -452,7 +500,8 @@ footer p {
     box-shadow: none;
   }
 
-  table {
+  table,
+  .comparison--personal table {
     min-width: 0;
     font-size: 8pt;
   }
@@ -463,10 +512,16 @@ footer p {
   }
 
   thead th,
-  .attribute-head {
+  .attribute-head,
+  .comparison--personal thead th,
+  .comparison--personal .attribute-head {
     border-bottom: 1px solid var(--purple-dark);
     background: white;
     color: var(--purple-dark);
+  }
+
+  .comparison--personal {
+    break-before: page;
   }
 
   .provider-vendor {

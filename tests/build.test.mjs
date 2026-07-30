@@ -35,31 +35,40 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-test("the data file describes a complete four-by-four grid", () => {
-  const providers = new Set(data.providers.map(provider => provider.id));
-  const attributes = new Set(data.attributes.map(attribute => attribute.id));
-  assert.equal(providers.size, 4);
-  assert.equal(attributes.size, 4);
-  assert.equal(data.cells.length, 16);
+function assertCompleteGrid(block, name, expectedCells) {
+  const providers = new Set(block.providers.map(provider => provider.id));
+  const attributes = new Set(block.attributes.map(attribute => attribute.id));
+  assert.equal(providers.size, 4, `${name}: provider count`);
+  assert.equal(block.cells.length, expectedCells, `${name}: cell count`);
+  assert.equal(providers.size * attributes.size, expectedCells, `${name}: grid does not match cell count`);
 
   const seen = new Set();
-  for (const cell of data.cells) {
-    const key = `${cell.provider}:${cell.attribute}`;
+  for (const cell of block.cells) {
+    const key = `${name} ${cell.provider}:${cell.attribute}`;
     assert.ok(providers.has(cell.provider), `unknown provider ${cell.provider}`);
     assert.ok(attributes.has(cell.attribute), `unknown attribute ${cell.attribute}`);
     assert.ok(!seen.has(key), `duplicate cell ${key}`);
     seen.add(key);
     assert.ok(cell.display?.trim(), `${key} has no display`);
-    assert.ok(cell.quote?.trim(), `${key} has no quote`);
     assert.ok(cell.checked?.trim(), `${key} has no checked date`);
     assert.ok(cell.source_url?.startsWith("https://"), `${key} source_url is not https`);
+    // Only an unwatched cell may omit the quote; every watched cell is grepped daily.
+    if (cell.watched === false) continue;
+    assert.ok(cell.quote?.trim(), `${key} is watched but has no quote`);
   }
-  assert.equal(seen.size, 16);
+  assert.equal(seen.size, expectedCells);
+}
+
+test("the data file describes a complete main grid and personal grid", () => {
+  assertCompleteGrid(data, "main", 20);
+  assertCompleteGrid(data.personal, "personal", 16);
+  assert.equal(data.attributes.length, 5);
+  assert.equal(data.personal.attributes.length, 4);
 });
 
-test("the built page shows every cell and provider", () => {
+test("the built page shows every cell and provider from both tables", () => {
   const html = build().toString("utf8");
-  for (const cell of data.cells) {
+  for (const cell of [...data.cells, ...data.personal.cells]) {
     assert.ok(
       html.includes(escapeHtml(cell.display)),
       `missing display for ${cell.provider}/${cell.attribute}`
@@ -69,11 +78,29 @@ test("the built page shows every cell and provider", () => {
       `missing source link for ${cell.provider}/${cell.attribute}`
     );
   }
-  for (const provider of data.providers) {
+  for (const provider of [...data.providers, ...data.personal.providers]) {
     assert.ok(html.includes(escapeHtml(provider.name)), `missing provider ${provider.name}`);
   }
   assert.ok(html.includes(formatDate(data.updated)), "missing the formatted prices-checked date");
-  assert.equal(countOccurrences(html, 'class="source-link"'), 16);
+  assert.equal(countOccurrences(html, 'class="source-link"'), 36);
+});
+
+test("the personal table renders as its own accessible region", () => {
+  const html = build().toString("utf8");
+  assert.ok(html.includes("Personal plans compared"), "missing the personal table heading");
+  assert.ok(
+    html.includes('role="region" aria-label="Personal AI subscription comparison" tabindex="0"'),
+    "personal table frame is missing its region semantics"
+  );
+  assert.equal(countOccurrences(html, 'class="table-frame"'), 2);
+  assert.equal(countOccurrences(html, 'class="visually-hidden"'), 2, "each table needs a caption");
+  assert.equal(countOccurrences(html, 'class="scroll-hint"'), 2);
+  assert.equal(countOccurrences(html, 'class="attribute-head"'), 2);
+  // Two tables, each with a corner header plus four provider headers.
+  assert.equal(countOccurrences(html, 'scope="col"'), 10);
+  assert.equal(countOccurrences(html, 'scope="row"'), 9);
+  // The page compares; it does not rank or recommend.
+  assert.ok(!/\bbest\b|\brecommend/i.test(html.replaceAll(/data:image\/png;base64,[A-Za-z0-9+/=]+/g, "")));
 });
 
 test("the built page carries none of the retired vocabulary", () => {
@@ -87,21 +114,74 @@ test("the built page carries none of the retired vocabulary", () => {
   }
 });
 
-test("a cell marked needs_verify shows the verify chip", () => {
-  assert.equal(countOccurrences(build().toString("utf8"), "Verify at source"), 0);
-
-  const dir = mkdtempSync(path.join(tmpdir(), "u7-verify-chip-"));
+// Builds a mutated copy of the real data in a temp dir. Returns the built HTML,
+// or null if the build refused the data.
+function buildVariant(name, mutate) {
+  const dir = mkdtempSync(path.join(tmpdir(), `u7-${name}-`));
   try {
     const dataFile = path.join(dir, "current.json");
     const outputFile = path.join(dir, "index.html");
     const copy = JSON.parse(JSON.stringify(data));
-    copy.cells[0].needs_verify = true;
+    mutate(copy);
     writeFileSync(dataFile, JSON.stringify(copy, null, 2));
-
-    execFileSync(process.execPath, ["scripts/build.mjs", dataFile, outputFile], { cwd: root, stdio: "pipe" });
-    assert.equal(countOccurrences(readFileSync(outputFile, "utf8"), "Verify at source"), 1);
+    try {
+      execFileSync(process.execPath, ["scripts/build.mjs", dataFile, outputFile], { cwd: root, stdio: "pipe" });
+    } catch {
+      return null;
+    }
+    return readFileSync(outputFile, "utf8");
   } finally {
     rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+test("a cell marked needs_verify shows the verify chip", () => {
+  // Asserted against controlled copies, not the live data: the daily check may
+  // legitimately leave a cell flagged, and that must not fail the build.
+  const clean = buildVariant("chip-clean", copy => {
+    for (const cell of [...copy.cells, ...copy.personal.cells]) cell.needs_verify = false;
+  });
+  assert.equal(countOccurrences(clean, "Verify at source"), 0);
+
+  const flagged = buildVariant("chip-main", copy => {
+    for (const cell of [...copy.cells, ...copy.personal.cells]) cell.needs_verify = false;
+    copy.cells[0].needs_verify = true;
+  });
+  assert.equal(countOccurrences(flagged, "Verify at source"), 1);
+
+  const flaggedPersonal = buildVariant("chip-personal", copy => {
+    for (const cell of [...copy.cells, ...copy.personal.cells]) cell.needs_verify = false;
+    copy.personal.cells[0].needs_verify = true;
+  });
+  assert.equal(countOccurrences(flaggedPersonal, "Verify at source"), 1);
+});
+
+test("an empty quote is allowed only on an unwatched cell", () => {
+  const watchedCell = data.personal.cells.findIndex(cell => cell.watched !== false);
+  const unwatchedCell = data.personal.cells.findIndex(cell => cell.watched === false);
+  assert.ok(watchedCell >= 0 && unwatchedCell >= 0, "fixture needs one watched and one unwatched cell");
+
+  assert.equal(
+    buildVariant("quote-watched", copy => { copy.personal.cells[watchedCell].quote = ""; }),
+    null,
+    "build should refuse a watched cell with an empty quote"
+  );
+  assert.ok(
+    buildVariant("quote-unwatched", copy => { copy.personal.cells[unwatchedCell].quote = ""; }),
+    "build should accept an unwatched cell with an empty quote"
+  );
+  assert.equal(
+    buildVariant("quote-newly-watched", copy => { delete copy.personal.cells[unwatchedCell].watched; }),
+    null,
+    "a cell defaults to watched, so removing the flag must require a quote"
+  );
+  // display, source_url and checked stay mandatory even when unwatched.
+  for (const field of ["display", "source_url", "checked"]) {
+    assert.equal(
+      buildVariant(`unwatched-${field}`, copy => { copy.personal.cells[unwatchedCell][field] = ""; }),
+      null,
+      `build should refuse an unwatched cell with an empty ${field}`
+    );
   }
 });
 
