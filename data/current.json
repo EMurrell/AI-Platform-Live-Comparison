@@ -150,9 +150,9 @@
       "attribute": "price",
       "display": "CAD $18.40/user/month on a one-year commitment, billed monthly",
       "source_url": "https://workspace.google.com/intl/en_ca/pricing.html",
-      "quote": "$18.40",
+      "quote": "save 16% with 1 year commitment",
       "checked": "2026-07-30",
-      "note": "The vendor labels the annual option \"save 16% with 1 year commitment\", so the flexible month-to-month plan costs more. This price is the Google Workspace Business Standard subscription itself, a full office suite with Gemini included, not a Gemini add-on. Introductory discounts available; terms vary.",
+      "note": "The vendor labels the annual option \"save 16% with 1 year commitment\", so the flexible month-to-month plan costs more. This price is the Google Workspace Business Standard subscription itself, a full office suite with Gemini included, not a Gemini add-on. Introductory discounts available; terms vary. The dollar figure is rendered in the visitor's local currency, so the daily check watches the commitment label rather than the price.",
       "needs_verify": false
     },
     {
@@ -377,7 +377,7 @@
         "source_url": "https://one.google.com/about/google-ai-plans/",
         "quote": "",
         "checked": "2026-07-30",
-        "note": "The page renders its prices with scripts, so the daily check cannot watch this figure; it was read from the Canadian view of the page on 30 July 2026. Google shows monthly billing only.",
+        "note": "The page renders its prices with scripts, so the daily check cannot watch this figure; it was read from the Canadian view of the page on 30 July 2026. Google shows monthly billing only, and sells a cheaper Google AI Plus plan on the same page.",
         "needs_verify": false,
         "watched": false
       },
