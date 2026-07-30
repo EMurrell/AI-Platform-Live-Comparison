@@ -53,10 +53,12 @@ jobs:
             echo "list<<CELLS_EOF"
             node -e '
               const data = require("./data/current.json");
-              const labels = new Map(data.attributes.map(a => [a.id, a.label]));
-              const names = new Map(data.providers.map(p => [p.id, p.name]));
-              for (const cell of data.cells.filter(c => c.needs_verify)) {
-                console.log(`- ${names.get(cell.provider)} / ${labels.get(cell.attribute)}: ${cell.source_url}`);
+              for (const block of [data, data.personal]) {
+                const labels = new Map(block.attributes.map(a => [a.id, a.label]));
+                const names = new Map(block.providers.map(p => [p.id, p.name]));
+                for (const cell of block.cells.filter(c => c.needs_verify)) {
+                  console.log(`- ${names.get(cell.provider)} / ${labels.get(cell.attribute)}: ${cell.source_url}`);
+                }
               }
             '
             echo "CELLS_EOF"
@@ -74,7 +76,10 @@ jobs:
             '
             echo "UNREACHABLE_EOF"
           } >> "$GITHUB_OUTPUT"
-          echo "count=$(node -p 'require("./data/current.json").cells.filter(c => c.needs_verify).length')" >> "$GITHUB_OUTPUT"
+          echo "count=$(node -p '
+            const data = require("./data/current.json");
+            [...data.cells, ...data.personal.cells].filter(c => c.needs_verify).length
+          ')" >> "$GITHUB_OUTPUT"
           echo "unreachable_count=$(node -p '
             const { existsSync, readFileSync } = require("fs");
             const summary = existsSync("./refresh-summary.json")
