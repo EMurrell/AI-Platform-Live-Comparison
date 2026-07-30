@@ -242,6 +242,7 @@ thead th:last-child {
 }
 
 .attribute-head {
+  left: 0;
   z-index: 5;
   width: 20%;
   background: var(--purple-dark);
@@ -361,6 +362,12 @@ footer p {
   border: 0 !important;
 }
 
+@media (max-width: 960px) {
+  .scroll-hint {
+    display: block;
+  }
+}
+
 @media (max-width: 900px) {
   .shell {
     width: min(calc(100% - 32px), var(--max-width));
@@ -403,10 +410,6 @@ footer p {
 
   .comparison {
     padding-block: 36px 64px;
-  }
-
-  .scroll-hint {
-    display: block;
   }
 
   table {
@@ -457,5 +460,31 @@ footer p {
   .attribute,
   thead th {
     position: static;
+  }
+
+  thead th,
+  .attribute-head {
+    border-bottom: 1px solid var(--purple-dark);
+    background: white;
+    color: var(--purple-dark);
+  }
+
+  .provider-vendor {
+    color: var(--purple-dark);
+  }
+
+  footer {
+    background: white;
+    color: var(--purple-dark);
+  }
+
+  footer p {
+    color: var(--purple-dark);
+  }
+
+  .source-link::after {
+    content: " (" attr(href) ")";
+    font-size: 6pt;
+    word-break: break-all;
   }
 }
