@@ -4,3 +4,8 @@ data/pending-price-review.json
 refresh-summary.json
 test-results/
 playwright-report/
+
+# Local working notes: plans, specs, and session handoff. Kept on disk, not published.
+docs/
+STATE.md
+SIMPLIFY-HANDOFF.md
