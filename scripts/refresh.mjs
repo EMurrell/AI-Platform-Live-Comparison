@@ -71,14 +71,24 @@ async function loadWithRetry(url) {
   return load(url);
 }
 
+// Both tables are checked the same way. A cell with `watched: false` carries no
+// quote a grep could confirm (an absence, or a figure the page renders with
+// scripts), so it is counted separately and never flagged for verification.
+const allCells = [...data.cells, ...data.personal.cells];
+const watched = allCells.filter(cell => cell.watched !== false);
+
 const pages = new Map();
-for (const url of new Set(data.cells.map(cell => cell.source_url))) {
+for (const url of new Set(watched.map(cell => cell.source_url))) {
   pages.set(url, await loadWithRetry(url));
 }
 
-const summary = { confirmed: [], missing: [], unreachable: [] };
-for (const cell of data.cells) {
+const summary = { confirmed: [], missing: [], unreachable: [], unwatched: [] };
+for (const cell of allCells) {
   const label = `${cell.provider}/${cell.attribute}`;
+  if (cell.watched === false) {
+    summary.unwatched.push(label);
+    continue;
+  }
   const page = pages.get(cell.source_url);
   if (!page.ok) {
     summary.unreachable.push(`${label} (${page.reason})`);
@@ -95,7 +105,7 @@ for (const cell of data.cells) {
   }
 }
 
-const stillNeedsVerify = data.cells.filter(cell => cell.needs_verify);
+const stillNeedsVerify = allCells.filter(cell => cell.needs_verify);
 const everythingReachable = summary.unreachable.length === 0;
 if (stillNeedsVerify.length === 0 && everythingReachable) {
   data.updated = today;
@@ -110,6 +120,7 @@ console.log(`Source check for ${today}`);
 console.log(`  confirmed: ${summary.confirmed.length}`);
 console.log(`  quote not found: ${summary.missing.length}`);
 console.log(`  unreachable: ${summary.unreachable.length}`);
+console.log(`  unwatched: ${summary.unwatched.length}`);
 for (const label of summary.missing) console.log(`  - not found: ${label}`);
 for (const label of summary.unreachable) console.log(`  - unreachable: ${label}`);
 console.log(stillNeedsVerify.length === 0 && everythingReachable
