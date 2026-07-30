@@ -148,7 +148,7 @@
         "https://help.openai.com/en/articles/8792536-managing-billing-and-seats-in-chatgpt-business"
       ],
       "confidence": "unverified",
-      "checked": "2026-07-29",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
       "note": "The live Canadian pricing page now says CA$34 monthly, but an earlier view of the same page showed an unlabelled $25.00 monthly footnote. The current CAD figures are defensible; the prior contradiction remains unresolved until checkout.",
       "change_kind": "researched_unverified"
@@ -170,7 +170,7 @@
       "attribute": "prerequisite",
       "value": "none",
       "display": "None; purchased directly as a self-serve Business workspace",
-      "source_url": "https://help.openai.com/en/articles/8980713-how-do-i-sign-up-for-chatgpt-team",
+      "source_url": "https://help.openai.com/en/articles/8980713-sign-up-for-chatgpt-business",
       "confidence": "high",
       "checked": "2026-07-30",
       "last_changed": "2026-07-29",
@@ -198,7 +198,7 @@
       "attribute": "mailbox_actions",
       "value": "draft_send_with_confirmation_and_outlook_shared_actions",
       "display": "Drafts and sends Gmail or Outlook email with user confirmation. Outlook shared mailboxes also support mark and move actions.",
-      "source_url": "https://help.openai.com/en/articles/6825453-how-can-i-integrate-chatgpt-with-my-app",
+      "source_url": "https://help.openai.com/en/articles/6825453-chatgpt-release-notes",
       "confidence": "high",
       "checked": "2026-07-30",
       "last_changed": "2026-07-30",
@@ -210,9 +210,9 @@
       "attribute": "unattended",
       "value": "scheduled",
       "display": "Yes, scheduled tasks. Maximum once per hour.",
-      "source_url": "https://help.openai.com/en/articles/10291617-tasks-in-chatgpt",
+      "source_url": "https://help.openai.com/en/articles/10291617-scheduled-tasks-in-chatgpt",
       "confidence": "high",
-      "checked": "2026-07-29",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
       "note": "Tasks cannot run more than once per hour and the number of active tasks is capped per plan.",
       "change_kind": "human_verified"
@@ -224,7 +224,7 @@
       "display": "No, by default",
       "source_url": "https://openai.com/business/pricing/",
       "confidence": "high",
-      "checked": "2026-07-29",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
       "note": "Stated as no training on your business data by default.",
       "change_kind": "human_verified"
@@ -264,7 +264,9 @@
       "checked": "2026-07-29",
       "last_changed": "2026-07-29",
       "note": "Claude's live page displays $28 and $35 without a currency code or region selector. Its help centre says pricing and currency vary by region and labels $20/$25 as U.S. pricing, so assigning CAD or USD to the live figures would be a guess.",
-      "change_kind": "researched_unverified"
+      "change_kind": "researched_unverified",
+      "status": "unconfirmed_today",
+      "failed_checks": 1
     },
     {
       "provider": "claude-team",
@@ -273,7 +275,7 @@
       "display": "2 users",
       "source_url": "https://claude.com/pricing",
       "confidence": "high",
-      "checked": "2026-07-29",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
       "note": "Stated as for teams of 2 to 150.",
       "change_kind": "human_verified"
@@ -329,7 +331,7 @@
       "display": "Yes. Runs remotely on a schedule even with the computer asleep.",
       "source_url": "https://support.claude.com/en/articles/13854387-schedule-recurring-tasks-in-claude-cowork",
       "confidence": "high",
-      "checked": "2026-07-29",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
       "note": "Scheduled tasks in Cowork, available on all paid plans. Hourly, daily, weekly or weekdays.",
       "change_kind": "human_verified"
@@ -404,7 +406,9 @@
       "checked": "2026-07-29",
       "last_changed": "2026-07-29",
       "note": "The Canada page states all prices are CAD. Its price card and dated details say 50% off for three months, but the linked ** footnote says the introductory price lasts 12 months for the first 20 users. The amounts and dated promotion window are explicit; the duration terms conflict.",
-      "change_kind": "researched_unverified"
+      "change_kind": "researched_unverified",
+      "status": "unconfirmed_today",
+      "failed_checks": 1
     },
     {
       "provider": "gemini-workspace",
@@ -539,7 +543,9 @@
       "checked": "2026-07-29",
       "last_changed": "2026-07-29",
       "note": "The promotional amount applies only to an annual commitment for the first year. A qualifying Microsoft 365 Business plan is also required.",
-      "change_kind": "human_verified"
+      "change_kind": "human_verified",
+      "status": "unconfirmed_today",
+      "failed_checks": 1
     },
     {
       "provider": "m365-copilot",
@@ -560,7 +566,7 @@
       "display": "A qualifying Microsoft 365 Business plan",
       "source_url": "https://www.microsoft.com/en-us/microsoft-365-copilot/pricing",
       "confidence": "high",
-      "checked": "2026-07-29",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
       "note": "Stated as a Microsoft 365 Business plan is required to purchase Microsoft 365 Copilot Business. The bundled SKUs include it.",
       "change_kind": "human_verified"
@@ -655,7 +661,7 @@
         "https://help.openai.com/en/articles/10421635-multicurrency-billing"
       ],
       "confidence": "high",
-      "checked": "2026-07-29",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
       "note": "This is the model API charge only, not a fixed implementation cost. Hosting, integration and operating costs are separate.",
       "change_kind": "human_verified"
@@ -742,7 +748,7 @@
       "attribute": "training",
       "value": false,
       "display": "No, by default",
-      "source_url": "https://platform.openai.com/docs/models/default-usage-policies-by-endpoint",
+      "source_url": "https://developers.openai.com/api/docs/guides/your-data#default-usage-policies-by-endpoint",
       "sources": [
         "https://platform.openai.com/docs/models/default-usage-policies-by-endpoint",
         "https://openai.com/business-data/"
