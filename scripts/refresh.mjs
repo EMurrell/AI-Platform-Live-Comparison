@@ -173,22 +173,13 @@ for (const cell of allCells) {
     continue;
   }
   const needles = needlesFor(cell);
-  const matched = needles.find(needle => page.haystacks.some(haystack => haystack.includes(needle)));
-  if (matched !== undefined) {
+  if (needles.length > 0 && needles.some(needle => page.haystacks.some(haystack => haystack.includes(needle)))) {
     cell.checked = today;
     cell.needs_verify = false;
     summary.confirmed.push(label);
-    // TEMPORARY: remove once CI has reported the US rendering of the Google price.
-    if (cell.render === true) console.log(`  - ${label} matched: ${JSON.stringify(matched)}`);
   } else {
     cell.needs_verify = true;
     summary.missing.push(label);
-    // TEMPORARY: remove once CI has reported the US rendering of the Google
-    // price. Prints the price-shaped strings the rendered page actually carries.
-    if (cell.render === true) {
-      const seen = [...new Set(page.haystacks[0].match(/\$[\d.,]+[a-z\s/]{0,20}/g) ?? [])];
-      console.log(`  - rendered price strings for ${label}: ${JSON.stringify(seen)}`);
-    }
   }
 }
 
