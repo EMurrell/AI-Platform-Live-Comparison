@@ -5,11 +5,12 @@ import path from "node:path";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const dataPath = path.resolve(root, process.argv[2] ?? "data/current.json");
 const outputPath = path.resolve(root, process.argv[3] ?? "index.html");
-const [dataText, template, styles, logo] = await Promise.all([
+const [dataText, template, styles, logo, logoWhite] = await Promise.all([
   readFile(dataPath, "utf8"),
   readFile(path.join(root, "src/template.html"), "utf8"),
   readFile(path.join(root, "src/styles.css"), "utf8"),
-  readFile(path.join(root, "assets/u7-logo.png"))
+  readFile(path.join(root, "assets/u7-logo.png")),
+  readFile(path.join(root, "assets/u7-logo-white.svg"))
 ]);
 
 const data = JSON.parse(dataText);
@@ -149,6 +150,7 @@ function renderTableRows(block, lookup) {
 const replacements = {
   "/*__STYLES__*/": styles,
   "/*__LOGO__*/": `data:image/png;base64,${logo.toString("base64")}`,
+  "/*__LOGO_WHITE__*/": `data:image/svg+xml;base64,${logoWhite.toString("base64")}`,
   "/*__UPDATED_DATE__*/": formatDate(data.updated),
   "/*__PROVIDER_HEADERS__*/": renderProviderHeaders(data),
   "/*__TABLE_ROWS__*/": renderTableRows(data, cells),

@@ -109,10 +109,10 @@ test("the personal table renders as its own accessible region", () => {
 });
 
 test("the built page carries none of the retired vocabulary", () => {
-  // The inlined logo is a base64 blob; strip it so terms are checked against real text.
+  // The inlined logos are base64 blobs; strip them so terms are checked against real text.
   const html = build()
     .toString("utf8")
-    .replaceAll(/data:image\/png;base64,[A-Za-z0-9+/=]+/g, "")
+    .replaceAll(/data:image\/(?:png|svg\+xml);base64,[A-Za-z0-9+/=]+/g, "")
     .toLowerCase();
   for (const term of ["custom build", "baseline", "validation", "confidence", "independent comparison", "unattended", "seed", "pipeline", "approval", "**"]) {
     assert.ok(!html.includes(term), `page still contains "${term}"`);

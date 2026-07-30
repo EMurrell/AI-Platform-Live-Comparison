@@ -366,8 +366,6 @@ footer {
 .footer__logo {
   display: block;
   width: 250px;
-  padding: 13px 16px;
-  background: white;
 }
 
 footer p {
@@ -514,6 +512,12 @@ footer p {
   footer {
     background: white;
     color: var(--purple-dark);
+  }
+
+  /* The footer prints white, and the logo is white: it would vanish. It is
+     decorative (alt=""), so hiding it costs the printed page nothing. */
+  .footer__logo {
+    display: none;
   }
 
   footer p {
