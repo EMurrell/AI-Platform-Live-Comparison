@@ -5,14 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "validate": "node scripts/validate.mjs",
-    "check-links": "node scripts/check-links.mjs",
     "test": "node --test",
-    "research": "node scripts/research.mjs",
-    "import-research": "node scripts/import-research.mjs",
-    "apply-price-review": "node scripts/apply-price-review.mjs",
-    "verify-seed": "node scripts/verify-seed.mjs",
-    "smoke": "node scripts/smoke-check.mjs",
-    "check": "npm run validate && npm run build && npm test"
+    "refresh": "node scripts/refresh.mjs",
+    "check": "npm run build && npm test"
   }
 }

@@ -1,777 +1,205 @@
 {
-  "schema_version": 2,
-  "seed_verified": false,
-  "last_successful_update": null,
-  "method": "A source-backed baseline was prepared from official vendor pages on 30 July 2026 and is awaiting one-time human approval. Ambiguous vendor pricing remains explicitly unverified. No automated refresh has completed successfully.",
+  "updated": "2026-07-30",
   "providers": [
     {
       "id": "chatgpt-business",
       "name": "ChatGPT Business",
-      "short_name": "ChatGPT",
-      "official_domains": [
-        "openai.com",
-        "chatgpt.com",
-        "help.openai.com",
-        "developers.openai.com",
-        "platform.openai.com"
-      ]
+      "vendor": "OpenAI"
     },
     {
       "id": "claude-team",
       "name": "Claude Team",
-      "short_name": "Claude",
-      "official_domains": [
-        "claude.com",
-        "support.claude.com",
-        "anthropic.com",
-        "docs.anthropic.com"
-      ]
+      "vendor": "Anthropic"
     },
     {
       "id": "gemini-workspace",
       "name": "Gemini for Google Workspace",
-      "short_name": "Gemini",
-      "official_domains": [
-        "google.com",
-        "support.google.com",
-        "workspace.google.com",
-        "developers.google.com"
-      ]
+      "vendor": "Google"
     },
     {
       "id": "m365-copilot",
       "name": "Microsoft 365 Copilot Business",
-      "short_name": "M365 Copilot",
-      "official_domains": [
-        "microsoft.com",
-        "support.microsoft.com",
-        "learn.microsoft.com"
-      ]
-    },
-    {
-      "id": "custom-build",
-      "name": "Custom build",
-      "short_name": "Custom build",
-      "official_domains": [
-        "openai.com",
-        "developers.openai.com",
-        "platform.openai.com",
-        "help.openai.com",
-        "google.com",
-        "developers.google.com",
-        "microsoft.com",
-        "learn.microsoft.com"
-      ]
+      "vendor": "Microsoft"
     }
   ],
   "attributes": [
     {
       "id": "price",
-      "group": "Cost",
-      "label": "Price",
-      "description": "The amount and currency billed to a Canadian customer. No currency conversion."
+      "label": "Price"
     },
     {
-      "id": "seat_minimum",
-      "group": "Cost",
-      "label": "Seat minimum",
-      "description": "Smallest supported purchase."
+      "id": "commitment",
+      "label": "Minimum commitment"
     },
     {
-      "id": "prerequisite",
-      "group": "Cost",
-      "label": "Prerequisite subscription",
-      "description": "What must already be licensed."
-    },
-    {
-      "id": "mailbox_access",
-      "group": "Capability",
-      "label": "Native mailbox access",
-      "description": "Gmail, Outlook, both or neither."
-    },
-    {
-      "id": "mailbox_actions",
-      "group": "Capability",
-      "label": "Can act on email",
-      "description": "Label, archive, move, draft or send.",
-      "emphasis": true
-    },
-    {
-      "id": "unattended",
-      "group": "Capability",
-      "label": "Unattended execution",
-      "description": "Scheduled or event-driven work without a live chat.",
-      "emphasis": true
+      "id": "email",
+      "label": "Works with your email"
     },
     {
       "id": "training",
-      "group": "Governance",
-      "label": "Business data used for training",
-      "description": "Default use of customer content for model training."
+      "label": "Data used for training"
     }
   ],
   "cells": [
     {
       "provider": "chatgpt-business",
       "attribute": "price",
-      "value": {
-        "billing_currency": "CAD",
-        "annual": {
-          "amount": 27,
-          "unit": "user/month",
-          "commitment": "billed annually"
-        },
-        "monthly": {
-          "amount": 34,
-          "unit": "user/month",
-          "commitment": "billed monthly"
-        },
-        "promotion": null,
-        "usage": null,
-        "evidence": [
-          {
-            "label": "Annual amount",
-            "quote": "CA$27 / user / month*",
-            "source_url": "https://chatgpt.com/pricing/"
-          },
-          {
-            "label": "Monthly amount",
-            "quote": "*2+ users, billed annually. CA$34 per user per month when billed monthly.",
-            "source_url": "https://chatgpt.com/pricing/"
-          }
-        ]
-      },
-      "display": "CAD 27/user/month with annual billing; CAD 34 with monthly billing",
+      "display": "CAD $27/user/month billed annually, $34 billed monthly",
       "source_url": "https://chatgpt.com/pricing/",
-      "sources": [
-        "https://chatgpt.com/pricing/",
-        "https://help.openai.com/en/articles/8792536-managing-billing-and-seats-in-chatgpt-business"
-      ],
-      "confidence": "unverified",
+      "quote": "chatgpt.team.yearly.2026",
       "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "The live Canadian pricing page now says CA$34 monthly, but an earlier view of the same page showed an unlabelled $25.00 monthly footnote. The current CAD figures are defensible; the prior contradiction remains unresolved until checkout.",
-      "change_kind": "researched_unverified"
+      "note": "The vendor shows the amount for your region only after the page loads.",
+      "needs_verify": false
     },
     {
       "provider": "chatgpt-business",
-      "attribute": "seat_minimum",
-      "value": 2,
-      "display": "2 standard ChatGPT seats",
+      "attribute": "commitment",
+      "display": "2 users minimum. No other paid subscription required.",
       "source_url": "https://help.openai.com/en/articles/8792828-what-is-chatgpt-team/",
-      "confidence": "high",
+      "quote": "you must purchase a minimum of 2 standard ChatGPT seats",
       "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "The two-seat minimum applies to standard ChatGPT seats. Legacy Codex-only Business configurations are a separate exception and do not provide ChatGPT access.",
-      "change_kind": "source_researched"
+      "note": null,
+      "needs_verify": false
     },
     {
       "provider": "chatgpt-business",
-      "attribute": "prerequisite",
-      "value": "none",
-      "display": "None; purchased directly as a self-serve Business workspace",
-      "source_url": "https://help.openai.com/en/articles/8980713-sign-up-for-chatgpt-business",
-      "confidence": "high",
-      "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "No other paid OpenAI subscription is required. A ChatGPT account and a minimum purchase of two standard seats are required.",
-      "change_kind": "source_researched"
-    },
-    {
-      "provider": "chatgpt-business",
-      "attribute": "mailbox_access",
-      "value": "both",
-      "display": "Gmail and Outlook",
-      "source_url": "https://openai.com/business/plugins/",
-      "sources": [
-        "https://openai.com/business/plugins/",
-        "https://help.openai.com/en/articles/6825453-how-can-i-integrate-chatgpt-with-my-app"
-      ],
-      "confidence": "high",
-      "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "Both require the corresponding connected app and may depend on workspace and administrator settings.",
-      "change_kind": "source_researched"
-    },
-    {
-      "provider": "chatgpt-business",
-      "attribute": "mailbox_actions",
-      "value": "draft_send_with_confirmation_and_outlook_shared_actions",
-      "display": "Drafts and sends Gmail or Outlook email with user confirmation. Outlook shared mailboxes also support mark and move actions.",
+      "attribute": "email",
+      "display": "Connects to Gmail and Outlook. Drafts and sends email once you confirm; Outlook shared mailboxes also support mark and move.",
       "source_url": "https://help.openai.com/en/articles/6825453-chatgpt-release-notes",
-      "confidence": "high",
+      "quote": "ChatGPT will create a draft and you can choose to send it",
       "checked": "2026-07-30",
-      "last_changed": "2026-07-30",
-      "note": "ChatGPT creates a draft and the user chooses whether to send it. Shared or delegated Outlook actions depend on Microsoft permissions and workspace settings.",
-      "change_kind": "source_researched"
-    },
-    {
-      "provider": "chatgpt-business",
-      "attribute": "unattended",
-      "value": "scheduled",
-      "display": "Yes, scheduled tasks. Maximum once per hour.",
-      "source_url": "https://help.openai.com/en/articles/10291617-scheduled-tasks-in-chatgpt",
-      "confidence": "high",
-      "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "Tasks cannot run more than once per hour and the number of active tasks is capped per plan.",
-      "change_kind": "human_verified"
+      "note": "Each mailbox needs its connected app, and shared-mailbox actions depend on Microsoft permissions.",
+      "needs_verify": false
     },
     {
       "provider": "chatgpt-business",
       "attribute": "training",
-      "value": false,
-      "display": "No, by default",
+      "display": "No, not by default.",
       "source_url": "https://openai.com/business/pricing/",
-      "confidence": "high",
+      "quote": "No training on your business data by default",
       "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "Stated as no training on your business data by default.",
-      "change_kind": "human_verified"
+      "note": null,
+      "needs_verify": false
     },
     {
       "provider": "claude-team",
       "attribute": "price",
-      "value": {
-        "billing_currency": null,
-        "annual": {
-          "amount": 28,
-          "unit": "seat/month",
-          "commitment": "billed annually"
-        },
-        "monthly": {
-          "amount": 35,
-          "unit": "seat/month",
-          "commitment": "billed monthly"
-        },
-        "promotion": null,
-        "usage": null,
-        "evidence": [
-          {
-            "label": "Annual and monthly amounts",
-            "quote": "$28 Per seat / month if billed annually. $35 if billed monthly.",
-            "source_url": "https://claude.com/pricing"
-          }
-        ]
-      },
-      "display": "$28/seat/month with annual billing; $35 monthly. Currency not stated.",
+      "display": "$28/seat/month billed annually, $35 billed monthly",
       "source_url": "https://claude.com/pricing",
-      "sources": [
-        "https://claude.com/pricing",
-        "https://support.claude.com/en/articles/9266767-what-is-the-team-plan"
-      ],
-      "confidence": "unverified",
-      "checked": "2026-07-29",
-      "last_changed": "2026-07-29",
-      "note": "Claude's live page displays $28 and $35 without a currency code or region selector. Its help centre says pricing and currency vary by region and labels $20/$25 as U.S. pricing, so assigning CAD or USD to the live figures would be a guess.",
-      "change_kind": "researched_unverified",
-      "status": "unconfirmed_today",
-      "failed_checks": 1
+      "quote": "Per seat / month if billed annually",
+      "checked": "2026-07-30",
+      "note": "Currency not stated on vendor page for Canadian customers.",
+      "needs_verify": false
     },
     {
       "provider": "claude-team",
-      "attribute": "seat_minimum",
-      "value": 2,
-      "display": "2 users",
+      "attribute": "commitment",
+      "display": "2 users minimum, up to 150. No other paid subscription required.",
       "source_url": "https://claude.com/pricing",
-      "confidence": "high",
+      "quote": "For teams of 2 to 150",
       "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "Stated as for teams of 2 to 150.",
-      "change_kind": "human_verified"
+      "note": "The person who creates the workspace needs a business email address.",
+      "needs_verify": false
     },
     {
       "provider": "claude-team",
-      "attribute": "prerequisite",
-      "value": "none",
-      "display": "None; create Team directly with a business email",
-      "source_url": "https://support.claude.com/en/articles/9267247-get-started-with-the-team-plan",
-      "confidence": "high",
-      "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "No Pro or Max subscription is required. The creator must use a business email, and members must use an allowed organization domain.",
-      "change_kind": "source_researched"
-    },
-    {
-      "provider": "claude-team",
-      "attribute": "mailbox_access",
-      "value": "both",
-      "display": "Gmail and Outlook",
-      "source_url": "https://claude.com/docs/connectors/getting-started",
-      "sources": [
-        "https://claude.com/docs/connectors/getting-started",
-        "https://support.claude.com/en/articles/15183774-connect-to-microsoft-365"
-      ],
-      "confidence": "high",
-      "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "Gmail uses the Google connector. Outlook requires a work Microsoft 365 account tied to an Entra tenant. Team owners or administrators must enable the connectors.",
-      "change_kind": "source_researched"
-    },
-    {
-      "provider": "claude-team",
-      "attribute": "mailbox_actions",
-      "value": "gmail_draft_organize_outlook_write_tools",
-      "display": "Gmail: drafts and organizes, but cannot send. Outlook: drafts, sends and organizes when administrator-enabled.",
+      "attribute": "email",
+      "display": "Connects to Gmail and Outlook. Drafts and organizes; Gmail sending not supported, Outlook sending requires an admin-enabled connector.",
       "source_url": "https://support.claude.com/en/articles/10166901-use-google-workspace-connectors",
-      "sources": [
-        "https://support.claude.com/en/articles/10166901-use-google-workspace-connectors",
-        "https://support.claude.com/en/articles/15183774-connect-to-microsoft-365"
-      ],
-      "confidence": "high",
+      "quote": "cannot send emails on your behalf",
       "checked": "2026-07-30",
-      "last_changed": "2026-07-30",
-      "note": "Gmail actions require explicit approval and sending remains manual. Microsoft 365 write tools can send and organize Outlook mail when an administrator enables them; attachments are not supported in write actions.",
-      "change_kind": "source_researched"
-    },
-    {
-      "provider": "claude-team",
-      "attribute": "unattended",
-      "value": "scheduled",
-      "display": "Yes. Runs remotely on a schedule even with the computer asleep.",
-      "source_url": "https://support.claude.com/en/articles/13854387-schedule-recurring-tasks-in-claude-cowork",
-      "confidence": "high",
-      "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "Scheduled tasks in Cowork, available on all paid plans. Hourly, daily, weekly or weekdays.",
-      "change_kind": "human_verified"
+      "note": "Gmail actions need you to confirm each one.",
+      "needs_verify": false
     },
     {
       "provider": "claude-team",
       "attribute": "training",
-      "value": false,
-      "display": "No, by default",
+      "display": "No, not by default.",
       "source_url": "https://claude.com/pricing",
-      "sources": [
-        "https://claude.com/pricing",
-        "https://privacy.claude.com/en/articles/7996885-how-do-you-use-personal-data-in-model-training"
-      ],
-      "confidence": "high",
+      "quote": "No model training on your content by default",
       "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "Team is a commercial Claude for Work offering. Chats and coding sessions are not used for training unless the organization explicitly participates or submits opted-in content.",
-      "change_kind": "source_researched"
+      "note": null,
+      "needs_verify": false
     },
     {
       "provider": "gemini-workspace",
       "attribute": "price",
-      "value": {
-        "billing_currency": "CAD",
-        "annual": {
-          "amount": 18.4,
-          "unit": "user/month",
-          "commitment": "one-year commitment; billed monthly"
-        },
-        "monthly": {
-          "amount": 22,
-          "unit": "user/month",
-          "commitment": "monthly"
-        },
-        "promotion": {
-          "description": "50% off",
-          "annual_amount": 9.2,
-          "annual_list_amount": 18.4,
-          "monthly_amount": 11,
-          "monthly_list_amount": 22,
-          "starts": "2026-08-12",
-          "ends": "2026-11-12"
-        },
-        "usage": null,
-        "evidence": [
-          {
-            "label": "Annual list and promotional amounts",
-            "quote": "Discount details Aug 12, 2026 – Nov 12, 2026 $9.20 CAD $18.40 (50% off) per user / month for all users Starting Nov 12, 2026 $18.40 CAD per user / month for all users",
-            "source_url": "https://workspace.google.com/intl/en_ca/pricing.html"
-          },
-          {
-            "label": "Monthly list and promotional amounts",
-            "quote": "Discount details Aug 12, 2026 – Nov 12, 2026 $11.00 CAD $22.00 (50% off) per user / month for all users Starting Nov 12, 2026 $22.00 CAD per user / month for all users",
-            "source_url": "https://workspace.google.com/intl/en_ca/pricing.html"
-          },
-          {
-            "label": "Promotion duration shown on the card",
-            "quote": "50% off your first 3 months of Google Workspace. Offer valid for a limited time. Discount applied at checkout.",
-            "source_url": "https://workspace.google.com/intl/en_ca/pricing.html"
-          },
-          {
-            "label": "Contradictory promotion footnote",
-            "quote": "This introductory price is only available for the first 20 users added, for 12 months.",
-            "source_url": "https://workspace.google.com/intl/en_ca/pricing.html"
-          }
-        ]
-      },
-      "display": "CAD 18.40 annual list (CAD 9.20 promo); CAD 22 monthly list (CAD 11 promo). Promo shown for 12 August–12 November 2026.",
+      "display": "CAD $18.40/user/month on a one-year commitment, $22 billed monthly",
       "source_url": "https://workspace.google.com/intl/en_ca/pricing.html",
-      "confidence": "unverified",
-      "checked": "2026-07-29",
-      "last_changed": "2026-07-29",
-      "note": "The Canada page states all prices are CAD. Its price card and dated details say 50% off for three months, but the linked ** footnote says the introductory price lasts 12 months for the first 20 users. The amounts and dated promotion window are explicit; the duration terms conflict.",
-      "change_kind": "researched_unverified",
-      "status": "unconfirmed_today",
-      "failed_checks": 1
+      "quote": "$18.40",
+      "checked": "2026-07-30",
+      "note": "Introductory discounts available; terms vary.",
+      "needs_verify": false
     },
     {
       "provider": "gemini-workspace",
-      "attribute": "seat_minimum",
-      "value": 1,
-      "display": "1 user",
+      "attribute": "commitment",
+      "display": "1 user minimum, up to 300. Requires a Google Workspace Business Standard subscription, which includes Gemini.",
       "source_url": "https://knowledge.workspace.google.com/admin/getting-started/editions/compare-business-editions",
-      "confidence": "high",
+      "quote": "Number of users 1-300",
       "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "Google identifies Business Standard as supporting organizations with 1 to 300 users.",
-      "change_kind": "source_researched"
+      "note": "The compared price is the Business Standard subscription itself; Gemini is no longer sold as a separate add-on.",
+      "needs_verify": false
     },
     {
       "provider": "gemini-workspace",
-      "attribute": "prerequisite",
-      "value": "google_workspace_business_standard",
-      "display": "Google Workspace Business Standard; Gemini included, with no separate add-on",
-      "source_url": "https://workspace.google.com/blog/product-announcements/empowering-businesses-with-ai",
-      "sources": [
-        "https://workspace.google.com/blog/product-announcements/empowering-businesses-with-ai",
-        "https://knowledge.workspace.google.com/admin/generative-ai/workspace-with-gemini/gemini-ai-features-now-included-in-google-workspace-subscriptions"
-      ],
-      "confidence": "high",
-      "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "The compared price is the Workspace Business Standard subscription itself. Google discontinued separate Gemini Business add-on packaging.",
-      "change_kind": "source_researched"
-    },
-    {
-      "provider": "gemini-workspace",
-      "attribute": "mailbox_access",
-      "value": "gmail",
-      "display": "Gmail",
-      "source_url": "https://workspace.google.com/intl/en/products/gmail/ai/",
-      "confidence": "high",
-      "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "Gemini is embedded in Gmail. Access depends on the Workspace edition and administrator configuration; no native Outlook mailbox access is documented.",
-      "change_kind": "source_researched"
-    },
-    {
-      "provider": "gemini-workspace",
-      "attribute": "mailbox_actions",
-      "value": "draft_only",
-      "display": "Summarises, suggests replies and drafts emails. The user sends and files.",
+      "attribute": "email",
+      "display": "Works with Gmail only. Summarizes threads, suggests replies and drafts email; you send and file it.",
       "source_url": "https://support.google.com/mail/answer/14355636",
-      "sources": [
-        "https://support.google.com/mail/answer/14355636",
-        "https://support.google.com/gemini/answer/14959807?co=GENIE.Platform%3DDesktop&hl=en"
-      ],
-      "confidence": "high",
+      "quote": "Gemini can draft a new email or a reply",
       "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "Embedded Gemini in Gmail can generate drafts. The standalone Gemini app's Gmail Connected App cannot create drafts or delete email. Neither source documents autonomous sending, labelling, archiving or moving.",
-      "change_kind": "source_researched"
-    },
-    {
-      "provider": "gemini-workspace",
-      "attribute": "unattended",
-      "value": "scheduled",
-      "display": "Yes—up to 10 scheduled actions",
-      "source_url": "https://support.google.com/gemini/answer/16316416?co=GENIE.Platform%3DDesktop&hl=en-CA",
-      "sources": [
-        "https://support.google.com/gemini/answer/16316416?co=GENIE.Platform%3DDesktop&hl=en-CA",
-        "https://support.google.com/gemini/answer/14620100?co=DASHER._Family%3DBusiness-Enterprise&hl=en"
-      ],
-      "confidence": "high",
-      "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "Business Standard qualifies for scheduled actions. Keep Activity must be enabled, and the administrator controls availability. This is scheduled execution, not arbitrary event-driven automation.",
-      "change_kind": "source_researched"
+      "note": "Drafting happens in Gemini inside Gmail; the separate Gemini app cannot create drafts.",
+      "needs_verify": false
     },
     {
       "provider": "gemini-workspace",
       "attribute": "training",
-      "value": false,
-      "display": "No, unless the customer grants permission",
+      "display": "No, unless you give permission.",
       "source_url": "https://workspace.google.com/security/ai-privacy/",
-      "confidence": "high",
+      "quote": "used for generative AI model training outside your domain without permission",
       "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "This applies to Business Standard's core-service, enterprise-protected Gemini use. Google expressly retains a permission qualifier.",
-      "change_kind": "source_researched"
+      "note": null,
+      "needs_verify": false
     },
     {
       "provider": "m365-copilot",
       "attribute": "price",
-      "value": {
-        "billing_currency": "CAD",
-        "annual": {
-          "amount": 28.5,
-          "unit": "user/month",
-          "commitment": "paid yearly"
-        },
-        "monthly": {
-          "amount": 34.2,
-          "unit": "user/month",
-          "commitment": "monthly commitment"
-        },
-        "promotion": {
-          "description": "Annual price for the first year",
-          "annual_amount": 24.43,
-          "annual_list_amount": 28.5,
-          "monthly_amount": null,
-          "monthly_list_amount": 34.2,
-          "starts": "2026-07-01",
-          "ends": "2026-09-30"
-        },
-        "usage": null,
-        "evidence": [
-          {
-            "label": "Annual list and promotional amounts",
-            "quote": "Originally starting from CAD $28.50 now starting from CAD $24.43 user/month, paid yearly (Annual subscription—auto renews)",
-            "source_url": "https://www.microsoft.com/en-ca/microsoft-365-copilot/pricing"
-          },
-          {
-            "label": "Monthly amount",
-            "quote": "CAD $34.20 user/month (Monthly commitment)",
-            "source_url": "https://www.microsoft.com/en-ca/microsoft-365-copilot/pricing"
-          },
-          {
-            "label": "Promotion dates",
-            "quote": "This discount offer is available between July 1, 2026, and September 30, 2026. An annual commitment is required, and promotional pricing applies to the first year only.",
-            "source_url": "https://www.microsoft.com/en-ca/microsoft-365-copilot/pricing"
-          }
-        ]
-      },
-      "display": "CAD 28.50 annual list (CAD 24.43 promo); CAD 34.20 monthly. Promo ends 30 September 2026.",
+      "display": "CAD $28.50/user/month paid yearly, $34.20 billed monthly",
       "source_url": "https://www.microsoft.com/en-ca/microsoft-365-copilot/pricing",
-      "confidence": "high",
-      "checked": "2026-07-29",
-      "last_changed": "2026-07-29",
-      "note": "The promotional amount applies only to an annual commitment for the first year. A qualifying Microsoft 365 Business plan is also required.",
-      "change_kind": "human_verified",
-      "status": "unconfirmed_today",
-      "failed_checks": 1
+      "quote": "CAD $28.50",
+      "checked": "2026-07-30",
+      "note": "A lower first-year price is currently offered on annual commitments.",
+      "needs_verify": false
     },
     {
       "provider": "m365-copilot",
-      "attribute": "seat_minimum",
-      "value": 1,
-      "display": "1 user",
+      "attribute": "commitment",
+      "display": "1 user minimum, up to 300. Requires a qualifying Microsoft 365 Business plan.",
       "source_url": "https://learn.microsoft.com/en-us/partner-center/announcements/2026-july",
-      "confidence": "high",
+      "quote": "No license minimum",
       "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "Microsoft states no licence minimum and a range of 1 to 300 licences for standalone Copilot Business.",
-      "change_kind": "source_researched"
+      "note": null,
+      "needs_verify": false
     },
     {
       "provider": "m365-copilot",
-      "attribute": "prerequisite",
-      "value": "m365_business_plan",
-      "display": "A qualifying Microsoft 365 Business plan",
-      "source_url": "https://www.microsoft.com/en-us/microsoft-365-copilot/pricing",
-      "confidence": "high",
-      "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "Stated as a Microsoft 365 Business plan is required to purchase Microsoft 365 Copilot Business. The bundled SKUs include it.",
-      "change_kind": "human_verified"
-    },
-    {
-      "provider": "m365-copilot",
-      "attribute": "mailbox_access",
-      "value": "outlook",
-      "display": "Outlook",
+      "attribute": "email",
+      "display": "Works with Outlook only. Drafts and prioritizes email, and can pin, flag, archive, delete or mark messages read.",
       "source_url": "https://support.microsoft.com/en-us/outlook/frequently-asked-questions-about-copilot-in-outlook",
-      "confidence": "high",
+      "quote": "actions such as pin, flag, archive, delete, and mark as read or unread",
       "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "Microsoft documents Copilot grounded in Outlook data and embedded in Outlook. No native Gmail mailbox access is documented.",
-      "change_kind": "source_researched"
-    },
-    {
-      "provider": "m365-copilot",
-      "attribute": "mailbox_actions",
-      "value": "triage_actions",
-      "display": "Pins, flags, archives, deletes and marks email read or unread; drafts and prioritises.",
-      "source_url": "https://support.microsoft.com/en-us/outlook/frequently-asked-questions-about-copilot-in-outlook",
-      "sources": [
-        "https://support.microsoft.com/en-us/outlook/frequently-asked-questions-about-copilot-in-outlook",
-        "https://support.microsoft.com/en-US/Outlook/triage-email-with-microsoft-365-copilot-in-outlook"
-      ],
-      "confidence": "high",
-      "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "Actions work on individual or multiple messages and update Outlook. Larger bulk actions can require confirmation. Email triage is currently documented as English-only; sending remains user-initiated.",
-      "change_kind": "source_researched"
-    },
-    {
-      "provider": "m365-copilot",
-      "attribute": "unattended",
-      "value": "scheduled",
-      "display": "Yes—up to 10 scheduled prompts",
-      "source_url": "https://support.microsoft.com/en-US/Microsoft-365-Copilot/schedule-your-most-used-copilot-prompts",
-      "confidence": "high",
-      "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "Requires a Microsoft 365 Copilot licence. Scheduled prompts can run through Copilot Chat, Teams or Outlook; administrators can disable Optional Connected Experiences.",
-      "change_kind": "source_researched"
+      "note": "Actions work on single or multiple messages; larger batches can ask for confirmation.",
+      "needs_verify": false
     },
     {
       "provider": "m365-copilot",
       "attribute": "training",
-      "value": false,
-      "display": "No",
+      "display": "No.",
       "source_url": "https://learn.microsoft.com/en-us/microsoft-365/copilot/enterprise-data-protection",
-      "confidence": "high",
+      "quote": "used to train foundation models",
       "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "Under enterprise data protection, prompts, responses and Microsoft Graph-grounded organizational data are excluded from foundation-model training.",
-      "change_kind": "source_researched"
-    },
-    {
-      "provider": "custom-build",
-      "attribute": "price",
-      "value": {
-        "billing_currency": "USD",
-        "annual": null,
-        "monthly": null,
-        "promotion": null,
-        "usage": {
-          "input_per_million": 5,
-          "output_per_million": 30,
-          "unit": "1M tokens"
-        },
-        "evidence": [
-          {
-            "label": "Input amount",
-            "quote": "Per 1M tokens Input $5.00",
-            "source_url": "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
-          },
-          {
-            "label": "Output amount",
-            "quote": "Per 1M tokens Output $30.00",
-            "source_url": "https://developers.openai.com/api/docs/models/gpt-5.6-sol"
-          },
-          {
-            "label": "Billing currency",
-            "quote": "Purchases for API credits are currently limited to USD.",
-            "source_url": "https://help.openai.com/en/articles/10421635-multicurrency-billing"
-          }
-        ]
-      },
-      "display": "Usage-based: USD 5 input and USD 30 output per 1M tokens. No annual or monthly subscription.",
-      "source_url": "https://developers.openai.com/api/docs/models/gpt-5.6-sol",
-      "sources": [
-        "https://developers.openai.com/api/docs/models/gpt-5.6-sol",
-        "https://help.openai.com/en/articles/10421635-multicurrency-billing"
-      ],
-      "confidence": "high",
-      "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "This is the model API charge only, not a fixed implementation cost. Hosting, integration and operating costs are separate.",
-      "change_kind": "human_verified"
-    },
-    {
-      "provider": "custom-build",
-      "attribute": "seat_minimum",
-      "value": 0,
-      "display": "No seat minimum",
-      "source_url": "https://developers.openai.com/api/docs/models/gpt-5.6-sol",
-      "confidence": "high",
-      "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "The model API is usage-based rather than licensed per person. Implementation, hosting and mailbox-provider costs remain separate.",
-      "change_kind": "source_researched"
-    },
-    {
-      "provider": "custom-build",
-      "attribute": "prerequisite",
-      "value": "api_and_implementation",
-      "display": "API billing, hosting, OAuth and implementation work",
-      "source_url": "https://developers.openai.com/api/docs/quickstart",
-      "sources": [
-        "https://developers.openai.com/api/docs/quickstart",
-        "https://developers.google.com/workspace/gmail/api/guides",
-        "https://learn.microsoft.com/en-us/graph/api/resources/mail-api-overview"
-      ],
-      "confidence": "high",
-      "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "This is an architecture, not a packaged subscription. It needs an API project and billing plus a hosted application, mailbox OAuth permissions and operating controls.",
-      "change_kind": "source_researched"
-    },
-    {
-      "provider": "custom-build",
-      "attribute": "mailbox_access",
-      "value": "both",
-      "display": "Gmail and Outlook, when integrated",
-      "source_url": "https://developers.google.com/workspace/gmail/api/guides",
-      "sources": [
-        "https://developers.google.com/workspace/gmail/api/guides",
-        "https://learn.microsoft.com/en-us/graph/api/resources/mail-api-overview"
-      ],
-      "confidence": "high",
-      "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "Gmail access is provided by the Gmail API and Outlook access by Microsoft Graph. Each requires its own application registration, OAuth scopes and administrator consent policy.",
-      "change_kind": "source_researched"
-    },
-    {
-      "provider": "custom-build",
-      "attribute": "mailbox_actions",
-      "value": "fully_configurable",
-      "display": "Configurable: label, archive, move, draft or send with chosen scopes and approvals",
-      "source_url": "https://developers.google.com/workspace/gmail/api/guides",
-      "sources": [
-        "https://developers.google.com/workspace/gmail/api/guides",
-        "https://learn.microsoft.com/en-us/graph/api/resources/mail-api-overview"
-      ],
-      "confidence": "high",
-      "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "Both mailbox APIs document read, draft, send and organization actions. The implemented scopes, approval gates and safety rules determine what a custom application can actually do.",
-      "change_kind": "source_researched"
-    },
-    {
-      "provider": "custom-build",
-      "attribute": "unattended",
-      "value": "fully_configurable",
-      "display": "Yes, if built with a scheduler or mailbox change notifications",
-      "source_url": "https://developers.google.com/workspace/gmail/api/guides/push",
-      "sources": [
-        "https://developers.google.com/workspace/gmail/api/guides/push",
-        "https://learn.microsoft.com/en-us/graph/outlook-change-notifications-overview"
-      ],
-      "confidence": "high",
-      "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "Gmail and Microsoft Graph provide mailbox change notifications, but the custom application must supply the scheduler or webhook service, retries, approvals and monitoring.",
-      "change_kind": "source_researched"
-    },
-    {
-      "provider": "custom-build",
-      "attribute": "training",
-      "value": false,
-      "display": "No, by default",
-      "source_url": "https://developers.openai.com/api/docs/guides/your-data#default-usage-policies-by-endpoint",
-      "sources": [
-        "https://platform.openai.com/docs/models/default-usage-policies-by-endpoint",
-        "https://openai.com/business-data/"
-      ],
-      "confidence": "high",
-      "checked": "2026-07-30",
-      "last_changed": "2026-07-29",
-      "note": "OpenAI states that API inputs and outputs are not used to train models by default unless the customer explicitly opts in. Default abuse-monitoring retention still applies.",
-      "change_kind": "source_researched"
-    }
-  ],
-  "changelog": [
-    {
-      "date": "2026-07-30",
-      "summary": "Replaced the remaining machine-generated non-price seed claims with source-backed research. Corrected current ChatGPT and Claude email-action capabilities; one-time baseline approval is still pending."
-    },
-    {
-      "date": "2026-07-29",
-      "summary": "Pricing rows changed to the amounts and currencies shown to Canadian customers. Currency conversion was removed; vendor ambiguities remain explicitly unverified."
-    },
-    {
-      "date": "2026-07-29",
-      "summary": "Unverified machine-generated seed added. No successful refresh or human verification has occurred."
+      "note": "Prompts, responses and Microsoft Graph data are excluded under enterprise data protection.",
+      "needs_verify": false
     }
   ]
 }
