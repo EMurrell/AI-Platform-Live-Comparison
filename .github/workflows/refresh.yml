@@ -61,16 +61,37 @@ jobs:
             '
             echo "CELLS_EOF"
           } >> "$GITHUB_OUTPUT"
+          {
+            echo "unreachable<<UNREACHABLE_EOF"
+            node -e '
+              const { existsSync, readFileSync } = require("fs");
+              const summary = existsSync("./refresh-summary.json")
+                ? JSON.parse(readFileSync("./refresh-summary.json", "utf8"))
+                : {};
+              for (const label of summary.unreachable ?? []) {
+                console.log(`- ${label}`);
+              }
+            '
+            echo "UNREACHABLE_EOF"
+          } >> "$GITHUB_OUTPUT"
           echo "count=$(node -p 'require("./data/current.json").cells.filter(c => c.needs_verify).length')" >> "$GITHUB_OUTPUT"
+          echo "unreachable_count=$(node -p '
+            const { existsSync, readFileSync } = require("fs");
+            const summary = existsSync("./refresh-summary.json")
+              ? JSON.parse(readFileSync("./refresh-summary.json", "utf8"))
+              : {};
+            (summary.unreachable ?? []).length
+          ')" >> "$GITHUB_OUTPUT"
 
       - name: Open or update the verification issue
-        if: steps.cells.outputs.count != '0'
+        if: steps.cells.outputs.count != '0' || steps.cells.outputs.unreachable_count != '0'
         env:
           GH_TOKEN: ${{ github.token }}
           CELL_LIST: ${{ steps.cells.outputs.list }}
+          UNREACHABLE_LIST: ${{ steps.cells.outputs.unreachable }}
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          BODY="$(printf 'The daily source check could not find the expected wording on these vendor pages. The page still shows the last confirmed values.\n\n%s\nRun: %s' "${CELL_LIST}" "${RUN_URL}")"
+          BODY="$(printf 'The daily source check needs a look. The page still shows the last confirmed values.\n\n## Quote not found on the page\n\n%s\n\n## Page unreachable from CI\n\n%s\n\nRun: %s' "${CELL_LIST:-None.}" "${UNREACHABLE_LIST:-None.}" "${RUN_URL}")"
           NUMBER="$(gh issue list --state open --search "\"${ISSUE_TITLE}\" in:title" --json number,title --jq ".[] | select(.title == \"${ISSUE_TITLE}\") | .number" | head -n 1)"
           if [ -n "${NUMBER}" ]; then
             gh issue edit "${NUMBER}" --body "${BODY}"
@@ -79,7 +100,7 @@ jobs:
           fi
 
       - name: Close the verification issue
-        if: steps.cells.outputs.count == '0'
+        if: steps.cells.outputs.count == '0' && steps.cells.outputs.unreachable_count == '0'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
