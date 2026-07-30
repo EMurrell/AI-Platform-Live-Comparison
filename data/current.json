@@ -375,11 +375,14 @@
         "attribute": "price",
         "display": "CAD $26.99/month",
         "source_url": "https://one.google.com/about/google-ai-plans/",
-        "quote": "",
+        "quote": [
+          "$26.99 CAD /mo",
+          "$19.99 /mo"
+        ],
         "checked": "2026-07-30",
-        "note": "The page renders its prices with scripts, so the daily check cannot watch this figure; it was read from the Canadian view of the page on 30 July 2026. Google shows monthly billing only, and sells a cheaper Google AI Plus plan on the same page.",
+        "note": "The page prices by region, so the daily check renders it in a browser and watches the price shown for the checker's region, which from GitHub is the US one. The Canadian figure shown here was last read by a person on 30 July 2026. Google shows monthly billing only, and sells a cheaper Google AI Plus plan on the same page.",
         "needs_verify": false,
-        "watched": false
+        "render": true
       },
       {
         "provider": "google-ai-pro",
