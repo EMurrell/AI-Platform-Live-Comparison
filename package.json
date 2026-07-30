@@ -9,6 +9,7 @@
     "check-links": "node scripts/check-links.mjs",
     "test": "node --test",
     "research": "node scripts/research.mjs",
+    "import-research": "node scripts/import-research.mjs",
     "apply-price-review": "node scripts/apply-price-review.mjs",
     "verify-seed": "node scripts/verify-seed.mjs",
     "smoke": "node scripts/smoke-check.mjs",

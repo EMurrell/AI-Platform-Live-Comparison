@@ -8,7 +8,7 @@ A source-backed, neutral comparison of business AI tools for managing work email
 - `data/current.json` is the only live data store. Its table shape is derived from the configured providers and attributes.
 - `src/` contains the HTML template and U7 styling.
 - `scripts/research.mjs` checks the five approaches in parallel, using official domains only.
-- `.github/workflows/refresh.yml` runs the daily refresh and protects pricing changes.
+- `.github/workflows/refresh.yml` is the manual API-research fallback and protects pricing changes.
 - `.github/workflows/source-health.yml` checks every official source daily and maintains one incident issue for broken links.
 - `.github/workflows/production-health.yml` smoke-tests the deployed site after releases and every six hours.
 - `.github/workflows/verify-baseline.yml` records the one-time authenticated baseline approval without inventing an update date.
@@ -45,16 +45,17 @@ Pricing records preserve the billing currency stated by each vendor for a Canadi
 
 When the repository is connected:
 
-1. Add `OPENAI_API_KEY` as a repository Actions secret.
+1. Add `OPENAI_API_KEY` as a repository Actions secret if the manual API-research fallback will be used.
 2. Enable GitHub Pages with “GitHub Actions” as the source.
 3. Confirm that Actions have permission to create pull requests.
-4. Run “Refresh comparison” manually once.
+4. Run “Refresh comparison” manually only when using the API-research fallback.
 
 The research model defaults to `gpt-5.6-sol` and can be changed with `OPENAI_MODEL`.
 
 ## Automated production controls
 
 - Every push and pull request runs data validation, a deterministic build and the full offline test suite.
+- A daily Codex automation reads official pages directly, imports its structured findings through the same merge rules, and commits only validated results. It does not require API billing.
 - A successful Pages deployment is immediately smoke-tested against the public URL.
 - The production page is checked every six hours. Deployment or smoke-test failures open or update one GitHub issue and close it automatically after recovery.
 - All official source URLs are checked daily. Vendor bot blocks are reported as restricted warnings rather than verified links; actually broken links open or update one GitHub issue.

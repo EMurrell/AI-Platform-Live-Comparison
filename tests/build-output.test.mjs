@@ -12,7 +12,9 @@ const [
   productionHealthWorkflow,
   sourceHealthWorkflow,
   dependabotWorkflow,
-  dependabotConfig
+  dependabotConfig,
+  packageJson,
+  importResearch
 ] = await Promise.all([
   readFile(path.join(root, "index.html"), "utf8"),
   readFile(path.join(root, "data/current.json"), "utf8").then(JSON.parse),
@@ -20,7 +22,9 @@ const [
   readFile(path.join(root, ".github/workflows/production-health.yml"), "utf8"),
   readFile(path.join(root, ".github/workflows/source-health.yml"), "utf8"),
   readFile(path.join(root, ".github/workflows/dependabot-automerge.yml"), "utf8"),
-  readFile(path.join(root, ".github/dependabot.yml"), "utf8")
+  readFile(path.join(root, ".github/dependabot.yml"), "utf8"),
+  readFile(path.join(root, "package.json"), "utf8").then(JSON.parse),
+  readFile(path.join(root, "scripts/import-research.mjs"), "utf8")
 ]);
 
 const EMPHASISED_ATTRIBUTES = ["mailbox_actions", "unattended"];
@@ -131,6 +135,14 @@ test("the refresh workflow commits staleness state before reporting a total outa
   const failureStep = refreshWorkflow.indexOf("- name: Fail a total research outage");
   assert.ok(commitStep > -1);
   assert.ok(failureStep > commitStep);
+});
+
+test("scheduled research uses the direct-source importer without requiring API billing", () => {
+  assert.doesNotMatch(refreshWorkflow, /^\s+schedule:/m);
+  assert.equal(packageJson.scripts["import-research"], "node scripts/import-research.mjs");
+  assert.match(importResearch, /mergeResearch/);
+  assert.match(importResearch, /provider_results/);
+  assert.doesNotMatch(importResearch, /OPENAI_API_KEY|api\.openai\.com|npm run research/);
 });
 
 test("production monitors avoid false incidents for expected vendor blocks and superseded deploys", () => {
