@@ -131,6 +131,16 @@ async function render(url) {
   }
 }
 
+// The render path earns the same second chance as the fetch path: a slow page or
+// a one-off Chrome crash should not cost a cell. A missing browser is the one
+// exception, since it stays missing for the whole run.
+async function renderWithRetry(url) {
+  const first = await render(url);
+  if (first.ok || first.reason === "chrome not available") return first;
+  await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+  return render(url);
+}
+
 // A quote is either one string or a list of them, and a list is satisfied by any
 // entry. That is how a page priced by region is watched from more than one place:
 // no single string can match both the Canadian and the US rendering.
@@ -156,7 +166,7 @@ for (const cell of watched) {
   const key = pageKey(cell);
   if (pages.has(key)) continue;
   pages.set(key, cell.render === true
-    ? await render(cell.source_url)
+    ? await renderWithRetry(cell.source_url)
     : await loadWithRetry(cell.source_url));
 }
 
