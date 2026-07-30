@@ -44,18 +44,18 @@
     {
       "provider": "chatgpt-business",
       "attribute": "price",
-      "display": "CAD $27/user/month billed annually, $34 billed monthly",
-      "source_url": "https://chatgpt.com/pricing/",
-      "quote": "chatgpt.team.yearly.2026",
+      "display": "US$20/user/month billed annually, $25 billed monthly",
+      "source_url": "https://help.openai.com/en/articles/8792828-what-is-chatgpt-business",
+      "quote": "$20 per user per month if billed annually",
       "checked": "2026-07-30",
-      "note": "The vendor shows the amount for your region only after the page loads.",
+      "note": "Listed in US dollars; the vendor says pricing may vary depending on your country and currency type.",
       "needs_verify": false
     },
     {
       "provider": "chatgpt-business",
       "attribute": "commitment",
       "display": "2 users minimum. No other paid subscription required.",
-      "source_url": "https://help.openai.com/en/articles/8792828-what-is-chatgpt-team/",
+      "source_url": "https://help.openai.com/en/articles/8792828-what-is-chatgpt-business",
       "quote": "you must purchase a minimum of 2 standard ChatGPT seats",
       "checked": "2026-07-30",
       "note": null,
@@ -64,11 +64,11 @@
     {
       "provider": "chatgpt-business",
       "attribute": "email",
-      "display": "Connects to Gmail and Outlook. Drafts and sends email once you confirm; Outlook shared mailboxes also support mark and move.",
-      "source_url": "https://help.openai.com/en/articles/6825453-chatgpt-release-notes",
-      "quote": "ChatGPT will create a draft and you can choose to send it",
+      "display": "Connects to Gmail and Outlook. Drafts updates, summarizes unread email, and lists action items.",
+      "source_url": "https://help.openai.com/en/articles/12084614-plugin-use-cases-and-prompts",
+      "quote": "gmail, microsoft outlook email",
       "checked": "2026-07-30",
-      "note": "Each mailbox needs its connected app, and shared-mailbox actions depend on Microsoft permissions.",
+      "note": "Which apps you get depends on your plan, workspace settings, role and region. Shared mailboxes and admin action controls are covered separately at help.openai.com/en/articles/12512241-outlook-email-and-calendar-app-for-chatgpt",
       "needs_verify": false
     },
     {
@@ -84,9 +84,9 @@
     {
       "provider": "claude-team",
       "attribute": "price",
-      "display": "$28/seat/month billed annually, $35 billed monthly",
+      "display": "$20/seat/month billed annually, $25 billed monthly",
       "source_url": "https://claude.com/pricing",
-      "quote": "Per seat / month if billed annually",
+      "quote": "$20 per seat / month if billed annually",
       "checked": "2026-07-30",
       "note": "Currency not stated on vendor page for Canadian customers.",
       "needs_verify": false
@@ -104,11 +104,11 @@
     {
       "provider": "claude-team",
       "attribute": "email",
-      "display": "Connects to Gmail and Outlook. Drafts and organizes; Gmail sending not supported, Outlook sending requires an admin-enabled connector.",
+      "display": "Connects to Gmail and Outlook, both enabled by an admin on Team plans. Drafts and organizes; cannot send from Gmail.",
       "source_url": "https://support.claude.com/en/articles/10166901-use-google-workspace-connectors",
       "quote": "cannot send emails on your behalf",
       "checked": "2026-07-30",
-      "note": "Gmail actions need you to confirm each one.",
+      "note": "Gmail actions need you to confirm each one. Outlook connects through a separate Microsoft 365 connector, set up at support.claude.com/en/articles/12542951-set-up-the-microsoft-365-connector",
       "needs_verify": false
     },
     {
@@ -124,11 +124,11 @@
     {
       "provider": "gemini-workspace",
       "attribute": "price",
-      "display": "CAD $18.40/user/month on a one-year commitment, $22 billed monthly",
+      "display": "CAD $18.40/user/month on a one-year commitment, billed monthly",
       "source_url": "https://workspace.google.com/intl/en_ca/pricing.html",
       "quote": "$18.40",
       "checked": "2026-07-30",
-      "note": "Introductory discounts available; terms vary.",
+      "note": "The vendor labels the annual option \"save 16% with 1 year commitment\", so the flexible month-to-month plan costs more. This price is the Google Workspace Business Standard subscription itself, a full office suite with Gemini included, not a Gemini add-on. Introductory discounts available; terms vary.",
       "needs_verify": false
     },
     {
@@ -138,7 +138,7 @@
       "source_url": "https://knowledge.workspace.google.com/admin/getting-started/editions/compare-business-editions",
       "quote": "Number of users 1-300",
       "checked": "2026-07-30",
-      "note": "The compared price is the Business Standard subscription itself; Gemini is no longer sold as a separate add-on.",
+      "note": null,
       "needs_verify": false
     },
     {
@@ -154,9 +154,9 @@
     {
       "provider": "gemini-workspace",
       "attribute": "training",
-      "display": "No, unless you give permission.",
+      "display": "Not used to train models outside your organization, unless you allow it.",
       "source_url": "https://workspace.google.com/security/ai-privacy/",
-      "quote": "used for generative AI model training outside your domain without permission",
+      "quote": "is not reviewed by humans or used for generative AI model training outside your domain without permission",
       "checked": "2026-07-30",
       "note": null,
       "needs_verify": false
@@ -168,17 +168,17 @@
       "source_url": "https://www.microsoft.com/en-ca/microsoft-365-copilot/pricing",
       "quote": "CAD $28.50",
       "checked": "2026-07-30",
-      "note": "A lower first-year price is currently offered on annual commitments.",
+      "note": "A lower first-year price is currently offered on annual commitments. Copilot Business is an add-on: a Microsoft 365 Business plan is required underneath, so the total cost is higher than this line. The same page also sells Microsoft 365 Business Standard with Copilot at CAD $31.90 user/month, paid yearly.",
       "needs_verify": false
     },
     {
       "provider": "m365-copilot",
       "attribute": "commitment",
-      "display": "1 user minimum, up to 300. Requires a qualifying Microsoft 365 Business plan.",
-      "source_url": "https://learn.microsoft.com/en-us/partner-center/announcements/2026-july",
-      "quote": "No license minimum",
+      "display": "Up to 300 users. Requires a qualifying Microsoft 365 Business plan.",
+      "source_url": "https://www.microsoft.com/en-ca/microsoft-365-copilot/pricing",
+      "quote": "A Microsoft 365 Business plan is required to purchase Microsoft 365 Copilot Business",
       "checked": "2026-07-30",
-      "note": null,
+      "note": "The Microsoft 365 Business plans on this page list identity and access management for up to 300 users.",
       "needs_verify": false
     },
     {
@@ -196,7 +196,7 @@
       "attribute": "training",
       "display": "No.",
       "source_url": "https://learn.microsoft.com/en-us/microsoft-365/copilot/enterprise-data-protection",
-      "quote": "used to train foundation models",
+      "quote": "isn't used to train foundation models",
       "checked": "2026-07-30",
       "note": "Prompts, responses and Microsoft Graph data are excluded under enterprise data protection.",
       "needs_verify": false
