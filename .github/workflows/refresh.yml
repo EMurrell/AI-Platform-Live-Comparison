@@ -1,19 +1,23 @@
-name: Refresh comparison
+name: Daily source check
 
 on:
+  schedule:
+    - cron: "20 11 * * *"
   workflow_dispatch:
-
-concurrency:
-  group: u7-ai-comparison-writer
-  cancel-in-progress: false
 
 permissions:
   contents: write
-  pull-requests: write
   issues: write
 
+concurrency:
+  group: source-check
+  cancel-in-progress: false
+
+env:
+  ISSUE_TITLE: "Source check: cells need verification"
+
 jobs:
-  refresh:
+  check:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the site
@@ -24,99 +28,62 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Research official sources
-        id: research
-        continue-on-error: true
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: gpt-5.6-sol
-        run: npm run research
+      - name: Check official sources
+        run: npm run refresh
 
-      - name: Validate, test and build
+      - name: Build and test
         run: npm run check
 
-      - name: Commit confirmed updates
-        id: confirmed
+      - name: Commit any changes
         run: |
           git config user.name "u7-data-bot"
           git config user.email "u7-data-bot@users.noreply.github.com"
           git add data/current.json index.html
           if git diff --cached --quiet; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Nothing changed."
           else
-            git commit -m "chore: refresh AI platform comparison"
+            git commit -m "chore: daily source check"
             git push
-            echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Prepare reviewed-price branch
-        if: hashFiles('data/pending-price-review.json') != ''
-        id: price
+      - name: Collect cells that need a look
+        id: cells
+        run: |
+          {
+            echo "list<<CELLS_EOF"
+            node -e '
+              const data = require("./data/current.json");
+              const labels = new Map(data.attributes.map(a => [a.id, a.label]));
+              const names = new Map(data.providers.map(p => [p.id, p.name]));
+              for (const cell of data.cells.filter(c => c.needs_verify)) {
+                console.log(`- ${names.get(cell.provider)} / ${labels.get(cell.attribute)}: ${cell.source_url}`);
+              }
+            '
+            echo "CELLS_EOF"
+          } >> "$GITHUB_OUTPUT"
+          echo "count=$(node -p 'require("./data/current.json").cells.filter(c => c.needs_verify).length')" >> "$GITHUB_OUTPUT"
+
+      - name: Open or update the verification issue
+        if: steps.cells.outputs.count != '0'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          REVIEW_ID=$(node -p "require('./data/pending-price-review.json').id")
-          BRANCH="price-review-${REVIEW_ID}"
-          echo "branch=${BRANCH}" >> "$GITHUB_OUTPUT"
-          if gh pr list --state open --head "${BRANCH}" --json number --jq 'length > 0' | grep -q true; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          git switch -c "${BRANCH}"
-          npm run apply-price-review
-          npm run validate
-          npm run build
-          git add data/current.json index.html
-          git commit -m "review: confirm detected pricing change"
-          git push --set-upstream origin "${BRANCH}"
-          echo "exists=false" >> "$GITHUB_OUTPUT"
-
-      - name: Open price review
-        if: steps.price.outputs.branch != '' && steps.price.outputs.exists == 'false'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh pr create \
-            --head "${{ steps.price.outputs.branch }}" \
-            --base "${{ github.event.repository.default_branch }}" \
-            --title "Review detected AI platform pricing change" \
-            --body "The daily source check found a pricing change. The public page still shows the previously published price with an **under review** notice. Merge this pull request only after a human confirms the official source."
-
-      - name: Fail a total research outage
-        if: steps.research.outcome == 'failure'
-        run: |
-          echo "::error::The research pull failed before any provider cell could be updated. Persisted staleness state has been committed."
-          exit 1
-
-  stale-alert:
-    runs-on: ubuntu-latest
-    if: always()
-    needs: refresh
-    steps:
-      - name: Report a failed refresh
-        if: needs.refresh.result == 'failure'
-        env:
-          GH_TOKEN: ${{ github.token }}
+          CELL_LIST: ${{ steps.cells.outputs.list }}
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          TITLE="[automation] Comparison refresh failed"
-          BODY="The comparison refresh failed. The visible last-updated date remains unchanged. Investigate: ${RUN_URL}"
-          ISSUE_NUMBER="$(gh issue list --state open --search "\"${TITLE}\" in:title" --json number,title --jq ".[] | select(.title == \"${TITLE}\") | .number" | head -n 1)"
-          if [ -n "${ISSUE_NUMBER}" ]; then
-            gh issue comment "${ISSUE_NUMBER}" --body "${BODY}"
+          BODY="$(printf 'The daily source check could not find the expected wording on these vendor pages. The page still shows the last confirmed values.\n\n%s\nRun: %s' "${CELL_LIST}" "${RUN_URL}")"
+          NUMBER="$(gh issue list --state open --search "\"${ISSUE_TITLE}\" in:title" --json number,title --jq ".[] | select(.title == \"${ISSUE_TITLE}\") | .number" | head -n 1)"
+          if [ -n "${NUMBER}" ]; then
+            gh issue edit "${NUMBER}" --body "${BODY}"
           else
-            gh issue create --title "${TITLE}" --body "${BODY}"
+            gh issue create --title "${ISSUE_TITLE}" --body "${BODY}"
           fi
-          echo "::error::${BODY}"
 
-      - name: Close the refresh incident after recovery
-        if: needs.refresh.result == 'success'
+      - name: Close the verification issue
+        if: steps.cells.outputs.count == '0'
         env:
           GH_TOKEN: ${{ github.token }}
-          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          TITLE="[automation] Comparison refresh failed"
-          ISSUE_NUMBER="$(gh issue list --state open --search "\"${TITLE}\" in:title" --json number,title --jq ".[] | select(.title == \"${TITLE}\") | .number" | head -n 1)"
-          if [ -n "${ISSUE_NUMBER}" ]; then
-            gh issue close "${ISSUE_NUMBER}" --comment "The comparison refresh recovered successfully: ${RUN_URL}"
+          NUMBER="$(gh issue list --state open --search "\"${ISSUE_TITLE}\" in:title" --json number,title --jq ".[] | select(.title == \"${ISSUE_TITLE}\") | .number" | head -n 1)"
+          if [ -n "${NUMBER}" ]; then
+            gh issue close "${NUMBER}" --comment "Every cell matched its source again."
           fi

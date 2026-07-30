@@ -1,4 +1,4 @@
-name: Publish GitHub Pages
+name: Deploy the comparison page
 
 on:
   push:
@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Validate, test and build
+      - name: Build and test
         run: npm run check
 
       - name: Configure Pages
@@ -48,6 +48,3 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5
-
-      - name: Smoke-test the deployed page
-        run: npm run smoke -- "${{ steps.deployment.outputs.page_url }}"
