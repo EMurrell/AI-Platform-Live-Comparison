@@ -3,8 +3,10 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const dataPath = path.resolve(root, process.argv[2] ?? "data/current.json");
+const outputPath = path.resolve(root, process.argv[3] ?? "index.html");
 const [dataText, template, styles, logo] = await Promise.all([
-  readFile(path.join(root, "data/current.json"), "utf8"),
+  readFile(dataPath, "utf8"),
   readFile(path.join(root, "src/template.html"), "utf8"),
   readFile(path.join(root, "src/styles.css"), "utf8"),
   readFile(path.join(root, "assets/u7-logo.png"))
@@ -29,7 +31,7 @@ for (const provider of data.providers) {
       problems.push(`missing cell ${key}`);
       continue;
     }
-    for (const field of ["display", "source_url", "checked"]) {
+    for (const field of ["display", "source_url", "quote", "checked"]) {
       if (typeof cell[field] !== "string" || cell[field].trim() === "") {
         problems.push(`${key} has an empty ${field}`);
       }
@@ -37,13 +39,16 @@ for (const provider of data.providers) {
     if (typeof cell.source_url === "string" && !cell.source_url.startsWith("https://")) {
       problems.push(`${key} source_url is not https`);
     }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(cell.checked ?? "")) {
+      problems.push(`${key} checked is not an ISO date`);
+    }
   }
 }
 if (!/^\d{4}-\d{2}-\d{2}$/.test(data.updated ?? "")) {
   problems.push("top-level updated is not an ISO date");
 }
 if (problems.length > 0) {
-  console.error(`Cannot build data/current.json:\n- ${problems.join("\n- ")}`);
+  console.error(`Cannot build ${path.relative(root, dataPath)}:\n- ${problems.join("\n- ")}`);
   process.exit(1);
 }
 
@@ -70,7 +75,7 @@ function indent(lines, spaces) {
 function renderCell(cell) {
   const body = [
     `  <p class="cell__answer">${escapeHtml(cell.display)}</p>`,
-    `  <a class="source-link" href="${escapeHtml(cell.source_url)}" rel="noopener noreferrer">Source</a>`,
+    `  <a class="source-link" href="${escapeHtml(cell.source_url)}" target="_blank" rel="noopener noreferrer">Source</a>`,
     cell.note ? `  <p class="cell__note">${escapeHtml(cell.note)}</p>` : null,
     cell.needs_verify ? `  <p class="cell__chip">Verify at source</p>` : null
   ].filter(Boolean);
@@ -103,8 +108,8 @@ const replacements = {
 
 let html = template;
 for (const [needle, replacement] of Object.entries(replacements)) {
-  html = html.replaceAll(needle, replacement);
+  html = html.replaceAll(needle, () => replacement);
 }
 
-await writeFile(path.join(root, "index.html"), html);
-console.log(`Built index.html with ${data.cells.length} cells.`);
+await writeFile(outputPath, html);
+console.log(`Built ${path.relative(root, outputPath)} with ${data.cells.length} cells.`);

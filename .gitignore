@@ -1,5 +1,6 @@
 .DS_Store
 U7_brandguide_March2026.pdf
 data/pending-price-review.json
+refresh-summary.json
 test-results/
 playwright-report/
