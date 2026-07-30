@@ -54,7 +54,12 @@ function assertCompleteGrid(block, name, expectedCells) {
     assert.ok(cell.source_url?.startsWith("https://"), `${key} source_url is not https`);
     // Only an unwatched cell may omit the quote; every watched cell is grepped daily.
     if (cell.watched === false) continue;
-    assert.ok(cell.quote?.trim(), `${key} is watched but has no quote`);
+    // A quote is one string or a list of them, and a list matches when any entry does.
+    const quotes = Array.isArray(cell.quote) ? cell.quote : [cell.quote];
+    assert.ok(
+      quotes.length > 0 && quotes.every(quote => quote?.trim()),
+      `${key} is watched but has no quote`
+    );
   }
   assert.equal(seen.size, expectedCells);
 }
@@ -181,6 +186,45 @@ test("an empty quote is allowed only on an unwatched cell", () => {
       buildVariant(`unwatched-${field}`, copy => { copy.personal.cells[unwatchedCell][field] = ""; }),
       null,
       `build should refuse an unwatched cell with an empty ${field}`
+    );
+  }
+});
+
+test("a watched quote may be a list, but not an empty or blank one", () => {
+  const watchedCell = data.personal.cells.findIndex(cell => cell.watched !== false);
+  assert.ok(watchedCell >= 0, "fixture needs a watched cell");
+
+  // A page that prices by region needs one acceptable quote per region.
+  assert.ok(
+    buildVariant("quote-list", copy => {
+      copy.personal.cells[watchedCell].quote = ["first wording", "second wording"];
+    }),
+    "build should accept a watched cell with a list of quotes"
+  );
+  assert.equal(
+    buildVariant("quote-list-empty", copy => { copy.personal.cells[watchedCell].quote = []; }),
+    null,
+    "build should refuse a watched cell with an empty quote list"
+  );
+  assert.equal(
+    buildVariant("quote-list-blank", copy => { copy.personal.cells[watchedCell].quote = ["   ", ""]; }),
+    null,
+    "build should refuse a quote list made of blanks"
+  );
+  // The single-string form is unchanged.
+  assert.ok(
+    buildVariant("quote-string", copy => { copy.personal.cells[watchedCell].quote = "one wording"; }),
+    "build should still accept a watched cell with a single quote string"
+  );
+});
+
+test("watched and render must be booleans when present", () => {
+  const cell = data.personal.cells.findIndex(entry => entry.watched !== false);
+  for (const flag of ["watched", "render"]) {
+    assert.equal(
+      buildVariant(`flag-${flag}`, copy => { copy.personal.cells[cell][flag] = "true"; }),
+      null,
+      `build should refuse a non-boolean ${flag}`
     );
   }
 });

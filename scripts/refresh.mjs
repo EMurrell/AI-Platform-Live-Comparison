@@ -1,6 +1,10 @@
 import { readFile, writeFile } from "node:fs/promises";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+
+const execFileAsync = promisify(execFile);
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const dataPath = path.join(root, "data/current.json");
@@ -10,6 +14,19 @@ const data = JSON.parse(original);
 const USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36";
 const TIMEOUT_MS = 15_000;
 const RETRY_DELAY_MS = 2_000;
+const RENDER_TIMEOUT_MS = 45_000;
+// A dumped DOM runs to a few hundred KB, well past execFile's 1 MB default.
+const RENDER_MAX_BUFFER = 64 * 1024 * 1024;
+// Chrome is only needed for pages that print their prices with scripts. GitHub's
+// Ubuntu runners ship Google Chrome, so watching one costs no new dependency.
+const CHROME_CANDIDATES = [
+  process.env.CHROME_BIN,
+  "google-chrome",
+  "google-chrome-stable",
+  "chromium-browser",
+  "chromium",
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+].filter(Boolean);
 const today = new Intl.DateTimeFormat("en-CA", {
   timeZone: "America/Toronto",
   year: "numeric",
@@ -71,15 +88,76 @@ async function loadWithRetry(url) {
   return load(url);
 }
 
+// Resolved once: the first name on the list that answers --version wins.
+let chromeLookup;
+function findChrome() {
+  chromeLookup ??= (async () => {
+    for (const candidate of CHROME_CANDIDATES) {
+      try {
+        await execFileAsync(candidate, ["--version"], { timeout: 10_000 });
+        return candidate;
+      } catch {
+        // Not this one; try the next name on the list.
+      }
+    }
+    return null;
+  })();
+  return chromeLookup;
+}
+
+// Renders the page in headless Chrome and puts the dumped DOM through the very
+// same pipeline as a fetched body, so a rendered quote is matched exactly like a
+// fetched one. A missing browser or a failed render is reported, never skipped.
+async function render(url) {
+  const chrome = await findChrome();
+  if (!chrome) return { ok: false, reason: "chrome not available" };
+  try {
+    const { stdout } = await execFileAsync(
+      chrome,
+      [
+        "--headless=new",
+        "--disable-gpu",
+        "--no-sandbox",
+        "--virtual-time-budget=10000",
+        "--dump-dom",
+        url
+      ],
+      { timeout: RENDER_TIMEOUT_MS, maxBuffer: RENDER_MAX_BUFFER }
+    );
+    if (stdout.trim() === "") return { ok: false, reason: "render returned an empty page" };
+    return { ok: true, haystacks: [collapse(withoutMarkup(stdout))] };
+  } catch (error) {
+    return { ok: false, reason: error.killed ? "render timed out" : "render failed" };
+  }
+}
+
+// A quote is either one string or a list of them, and a list is satisfied by any
+// entry. That is how a page priced by region is watched from more than one place:
+// no single string can match both the Canadian and the US rendering.
+function needlesFor(cell) {
+  const quotes = Array.isArray(cell.quote) ? cell.quote : [cell.quote ?? ""];
+  return quotes.map(quote => collapse(quote ?? "")).filter(quote => quote !== "");
+}
+
 // Both tables are checked the same way. A cell with `watched: false` carries no
-// quote a grep could confirm (an absence, or a figure the page renders with
-// scripts), so it is counted separately and never flagged for verification.
+// quote a grep could confirm (it states an absence), so it is counted separately
+// and never flagged for verification.
 const allCells = [...data.cells, ...data.personal.cells];
 const watched = allCells.filter(cell => cell.watched !== false);
 
+// A rendered read and a fetched read of one URL are different pages, so they are
+// cached apart; within a mode each URL is still loaded only once.
+function pageKey(cell) {
+  return `${cell.render === true ? "render" : "fetch"} ${cell.source_url}`;
+}
+
 const pages = new Map();
-for (const url of new Set(watched.map(cell => cell.source_url))) {
-  pages.set(url, await loadWithRetry(url));
+for (const cell of watched) {
+  const key = pageKey(cell);
+  if (pages.has(key)) continue;
+  pages.set(key, cell.render === true
+    ? await render(cell.source_url)
+    : await loadWithRetry(cell.source_url));
 }
 
 const summary = { confirmed: [], missing: [], unreachable: [], unwatched: [] };
@@ -89,19 +167,25 @@ for (const cell of allCells) {
     summary.unwatched.push(label);
     continue;
   }
-  const page = pages.get(cell.source_url);
+  const page = pages.get(pageKey(cell));
   if (!page.ok) {
     summary.unreachable.push(`${label} (${page.reason})`);
     continue;
   }
-  const needle = collapse(cell.quote ?? "");
-  if (needle !== "" && page.haystacks.some(haystack => haystack.includes(needle))) {
+  const needles = needlesFor(cell);
+  if (needles.length > 0 && needles.some(needle => page.haystacks.some(haystack => haystack.includes(needle)))) {
     cell.checked = today;
     cell.needs_verify = false;
     summary.confirmed.push(label);
   } else {
     cell.needs_verify = true;
     summary.missing.push(label);
+    // TEMPORARY: remove once CI has reported the US rendering of the Google
+    // price. Prints the price-shaped strings the rendered page actually carries.
+    if (cell.render === true) {
+      const seen = [...new Set(page.haystacks[0].match(/\$[\d.,]+[a-z\s/]{0,20}/g) ?? [])];
+      console.log(`  - rendered price strings for ${label}: ${JSON.stringify(seen)}`);
+    }
   }
 }
 

@@ -21,6 +21,19 @@ function isWatched(cell) {
   return cell.watched !== false;
 }
 
+// A watched cell's quote is either one non-empty string or a non-empty list of
+// them; scripts/refresh.mjs counts a list as matched when any entry matches.
+function quoteProblem(quote) {
+  if (Array.isArray(quote)) {
+    if (quote.length === 0) return "has an empty quote list";
+    if (quote.some(entry => typeof entry !== "string" || entry.trim() === "")) {
+      return "has a blank entry in its quote list";
+    }
+    return null;
+  }
+  return typeof quote === "string" && quote.trim() !== "" ? null : "has an empty quote";
+}
+
 function indexBlock(block, name) {
   const cells = new Map(block.cells.map(cell => [`${cell.provider}:${cell.attribute}`, cell]));
   const expected = block.providers.length * block.attributes.length;
@@ -38,12 +51,18 @@ function indexBlock(block, name) {
         problems.push(`missing cell ${key}`);
         continue;
       }
-      const required = isWatched(cell)
-        ? ["display", "source_url", "quote", "checked"]
-        : ["display", "source_url", "checked"];
-      for (const field of required) {
+      for (const field of ["display", "source_url", "checked"]) {
         if (typeof cell[field] !== "string" || cell[field].trim() === "") {
           problems.push(`${key} has an empty ${field}`);
+        }
+      }
+      if (isWatched(cell)) {
+        const issue = quoteProblem(cell.quote);
+        if (issue) problems.push(`${key} ${issue}`);
+      }
+      for (const flag of ["watched", "render"]) {
+        if (flag in cell && typeof cell[flag] !== "boolean") {
+          problems.push(`${key} ${flag} must be true or false`);
         }
       }
       if (typeof cell.source_url === "string" && !cell.source_url.startsWith("https://")) {
