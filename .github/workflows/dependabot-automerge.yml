@@ -1,0 +1,55 @@
+name: Merge safe Dependabot updates
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: dependabot-automerge-${{ github.event.workflow_run.head_sha }}
+  cancel-in-progress: true
+
+jobs:
+  merge:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge a same-major GitHub Actions update
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          PR_JSON="$(gh pr list \
+            --repo "${GITHUB_REPOSITORY}" \
+            --state open \
+            --author "app/dependabot" \
+            --search "${HEAD_SHA}" \
+            --json number,title,headRefOid |
+            jq -c --arg sha "${HEAD_SHA}" 'map(select(.headRefOid == $sha)) | first // empty')"
+          if [ -z "${PR_JSON}" ]; then
+            echo "No open Dependabot pull request matches ${HEAD_SHA}."
+            exit 0
+          fi
+
+          NUMBER="$(jq -r '.number' <<< "${PR_JSON}")"
+          TITLE="$(jq -r '.title' <<< "${PR_JSON}")"
+          VERSIONS="$(sed -nE 's/.* from ([0-9]+)\.[0-9.]+ to ([0-9]+)\.[0-9.]+.*/\1 \2/p' <<< "${TITLE}")"
+          if [ -z "${VERSIONS}" ]; then
+            echo "::warning::Could not determine the dependency major versions from: ${TITLE}"
+            exit 0
+          fi
+
+          read -r FROM_MAJOR TO_MAJOR <<< "${VERSIONS}"
+          if [ "${FROM_MAJOR}" != "${TO_MAJOR}" ]; then
+            echo "::warning::Dependabot PR #${NUMBER} is a major upgrade and requires deliberate review."
+            exit 0
+          fi
+
+          gh pr merge "${NUMBER}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --squash \
+            --delete-branch

@@ -5,12 +5,22 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const [html, data, refreshWorkflow, productionHealthWorkflow, sourceHealthWorkflow] = await Promise.all([
+const [
+  html,
+  data,
+  refreshWorkflow,
+  productionHealthWorkflow,
+  sourceHealthWorkflow,
+  dependabotWorkflow,
+  dependabotConfig
+] = await Promise.all([
   readFile(path.join(root, "index.html"), "utf8"),
   readFile(path.join(root, "data/current.json"), "utf8").then(JSON.parse),
   readFile(path.join(root, ".github/workflows/refresh.yml"), "utf8"),
   readFile(path.join(root, ".github/workflows/production-health.yml"), "utf8"),
-  readFile(path.join(root, ".github/workflows/source-health.yml"), "utf8")
+  readFile(path.join(root, ".github/workflows/source-health.yml"), "utf8"),
+  readFile(path.join(root, ".github/workflows/dependabot-automerge.yml"), "utf8"),
+  readFile(path.join(root, ".github/dependabot.yml"), "utf8")
 ]);
 
 const EMPHASISED_ATTRIBUTES = ["mailbox_actions", "unattended"];
@@ -128,4 +138,12 @@ test("production monitors avoid false incidents for expected vendor blocks and s
   assert.doesNotMatch(productionHealthWorkflow, /DEPLOYMENT_CONCLUSION.*!=.*success/);
   assert.match(sourceHealthWorkflow, /No broken source links remain; vendor-restricted pages continue/);
   assert.doesNotMatch(sourceHealthWorkflow, /Every source returned a verifiable response/);
+});
+
+test("Dependabot automation merges only CI-passing same-major updates", () => {
+  assert.match(dependabotConfig, /version-update:semver-major/);
+  assert.match(dependabotWorkflow, /workflow_run\.conclusion == 'success'/);
+  assert.match(dependabotWorkflow, /--author "app\/dependabot"/);
+  assert.match(dependabotWorkflow, /FROM_MAJOR.*TO_MAJOR/);
+  assert.match(dependabotWorkflow, /gh pr merge/);
 });
