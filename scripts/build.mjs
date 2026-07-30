@@ -14,7 +14,8 @@ const data = JSON.parse(dataText);
 const cells = new Map(data.cells.map(cell => [`${cell.provider}:${cell.attribute}`, cell]));
 const updated = data.last_successful_update ? new Date(data.last_successful_update) : null;
 const hasSuccessfulUpdate = updated !== null && Number.isFinite(updated.getTime());
-const hasVerifiedUpdate = hasSuccessfulUpdate && data.seed_verified === true;
+const seedApproved = data.seed_verified === true;
+const hasVerifiedUpdate = hasSuccessfulUpdate && seedApproved;
 const now = new Date();
 const ageDays = hasSuccessfulUpdate
   ? Math.max(0, Math.floor((now - updated) / 86_400_000))
@@ -67,8 +68,13 @@ function isRecentChange(cell) {
 function renderCell(cell, attribute) {
   const classes = ["cell"];
   const isUnverifiedSeed = cell.change_kind === "unverified_seed";
+  const isAwaitingApproval = !seedApproved && cell.change_kind === "source_researched";
   const isUnverified = cell.confidence === "unverified";
-  const needsVerification = isUnverified || cell.confidence === "low" || cell.status === "unconfirmed_today";
+  const needsVerification = isUnverifiedSeed
+    || isAwaitingApproval
+    || isUnverified
+    || cell.confidence === "low"
+    || cell.status === "unconfirmed_today";
   if (attribute.emphasis) classes.push("cell--emphasis");
   if (isRecentChange(cell)) classes.push("cell--changed");
   if (needsVerification) classes.push("cell--verify");
@@ -76,11 +82,21 @@ function renderCell(cell, attribute) {
   const flags = [
     cell.pending_review ? `<span class="review-flag">Price change under review</span>` : "",
     needsVerification
-      ? `<span class="verify-flag">${isUnverifiedSeed ? "Unverified machine-generated seed" : isUnverified ? "Vendor wording is unverified" : "Verify before relying on this"}</span>`
+      ? `<span class="verify-flag">${
+          isUnverifiedSeed
+            ? "Unverified machine-generated seed"
+            : isAwaitingApproval
+              ? "Source-backed; awaiting baseline approval"
+              : isUnverified
+                ? "Vendor wording is unverified"
+                : "Verify before relying on this"
+        }</span>`
       : ""
   ].join("");
   const confidenceLabel = isUnverifiedSeed
     ? "Unverified seed"
+    : isAwaitingApproval
+      ? "Awaiting approval"
     : isUnverified
       ? "Unverified"
       : `${escapeHtml(cell.confidence)} confidence`;
@@ -117,12 +133,17 @@ const tableRows = data.attributes.map(attribute => {
   return group + row;
 }).join("\n");
 
-const staleAlert = !hasVerifiedUpdate
-  ? `<aside class="stale-alert" role="status"><strong>This comparison is unverified.</strong>${
-      hasSuccessfulUpdate
-        ? "An automated refresh has completed, but human verification of the seed is still outstanding."
-        : "The machine-generated seed has not been human-verified, and no automated refresh has completed successfully."
+const hasMachineSeed = data.cells.some(cell => cell.change_kind === "unverified_seed");
+const staleAlert = !seedApproved
+  ? `<aside class="stale-alert" role="status"><strong>This comparison is awaiting baseline approval.</strong>${
+      hasMachineSeed
+        ? "Machine-generated seed claims still require source-backed research and human review."
+        : hasSuccessfulUpdate
+          ? "The source-backed baseline and an automated refresh are complete, but the one-time human approval is still outstanding."
+          : "Source-backed research is complete. One-time human approval and the first complete automated refresh are still outstanding."
     }</aside>`
+  : !hasSuccessfulUpdate
+    ? `<aside class="stale-alert" role="status"><strong>The baseline is approved.</strong>The first complete automated source refresh is still pending, so no last-updated date is shown.</aside>`
   : ageDays > 7
     ? `<aside class="stale-alert" role="status"><strong>This comparison may be out of date.</strong>The last complete pull was ${ageDays} days ago. Source links remain available for direct verification.</aside>`
     : "";
@@ -135,16 +156,20 @@ const logoData = `data:image/png;base64,${logo.toString("base64")}`;
 const replacements = {
   "/*__STYLES__*/": styles,
   "/*__LOGO__*/": logoData,
-  "/*__UPDATED_LABEL__*/": hasVerifiedUpdate ? "Last updated on" : "Verification status",
-  "/*__UPDATED_DATE__*/": hasVerifiedUpdate ? formatDate(data.last_successful_update) : "Unverified seed",
-  "/*__UPDATED_LONG__*/": hasVerifiedUpdate ? formatDate(data.last_successful_update, true) : "No verified publication date",
+  "/*__UPDATED_LABEL__*/": hasVerifiedUpdate ? "Last updated on" : seedApproved ? "Refresh status" : "Verification status",
+  "/*__UPDATED_DATE__*/": hasVerifiedUpdate ? formatDate(data.last_successful_update) : seedApproved ? "Baseline approved" : hasMachineSeed ? "Unverified seed" : "Baseline review pending",
+  "/*__UPDATED_LONG__*/": hasVerifiedUpdate ? formatDate(data.last_successful_update, true) : seedApproved ? "Baseline approved; no complete automated refresh yet" : "No verified publication date",
   "/*__FRESHNESS__*/": hasVerifiedUpdate
     ? ageDays === 0
       ? "Complete source check passed today"
       : `${ageDays} day${ageDays === 1 ? "" : "s"} since the last complete check`
     : hasSuccessfulUpdate
       ? "Automated refresh complete; human verification still required"
-      : "No successful automated refresh or human seed verification",
+      : seedApproved
+        ? "Human baseline approval complete; automated refresh pending"
+        : hasMachineSeed
+          ? "No successful automated refresh or human seed verification"
+          : "Source research complete; approval and automated refresh pending",
   "/*__STALE_ALERT__*/": staleAlert,
   "/*__PROVIDER_HEADERS__*/": providerHeaders,
   "/*__TABLE_ROWS__*/": tableRows,

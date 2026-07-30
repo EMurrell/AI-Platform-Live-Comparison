@@ -1,0 +1,71 @@
+name: Monitor production site
+
+on:
+  schedule:
+    - cron: "43 */6 * * *"
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Publish GitHub Pages"]
+    types: [completed]
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: production-health
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+
+      - name: Check the deployed page
+        id: smoke
+        continue-on-error: true
+        run: npm run smoke -- "https://emurrell.github.io/AI-Platform-Live-Comparison/"
+
+      - name: Open, update or close the production incident
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          DEPLOYMENT_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          SMOKE_OUTCOME: ${{ steps.smoke.outcome }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          TITLE="[automation] Production site health check failed"
+          ISSUE_NUMBER="$(gh issue list --state open --search "\"${TITLE}\" in:title" --json number,title --jq ".[] | select(.title == \"${TITLE}\") | .number" | head -n 1)"
+          FAILED=false
+          if [ "${SMOKE_OUTCOME}" != "success" ]; then
+            FAILED=true
+          fi
+          if [ "${EVENT_NAME}" = "workflow_run" ]; then
+            case "${DEPLOYMENT_CONCLUSION}" in
+              failure|timed_out|action_required|startup_failure|stale)
+                FAILED=true
+                ;;
+            esac
+          fi
+
+          if [ "${FAILED}" = "true" ]; then
+            BODY="The production deployment or smoke test failed. The previously deployed page may still be available. Investigate the workflow run: ${RUN_URL}"
+            if [ -n "${ISSUE_NUMBER}" ]; then
+              gh issue comment "${ISSUE_NUMBER}" --body "${BODY}"
+            else
+              gh issue create --title "${TITLE}" --body "${BODY}"
+            fi
+            echo "::error::${BODY}"
+            exit 1
+          fi
+
+          if [ -n "${ISSUE_NUMBER}" ]; then
+            gh issue close "${ISSUE_NUMBER}" --comment "Production recovered. The deployment and smoke test passed: ${RUN_URL}"
+          fi

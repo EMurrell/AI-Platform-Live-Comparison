@@ -6,22 +6,23 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: u7-ai-comparison-refresh
+  group: u7-ai-comparison-writer
   cancel-in-progress: false
 
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 
 jobs:
   refresh:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the site
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "22"
 
@@ -96,5 +97,28 @@ jobs:
     steps:
       - name: Report a failed refresh
         if: needs.refresh.result == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          echo "::error::The comparison refresh failed. The visible last-updated date remains unchanged."
+          TITLE="[automation] Comparison refresh failed"
+          BODY="The comparison refresh failed. The visible last-updated date remains unchanged. Investigate: ${RUN_URL}"
+          ISSUE_NUMBER="$(gh issue list --state open --search "\"${TITLE}\" in:title" --json number,title --jq ".[] | select(.title == \"${TITLE}\") | .number" | head -n 1)"
+          if [ -n "${ISSUE_NUMBER}" ]; then
+            gh issue comment "${ISSUE_NUMBER}" --body "${BODY}"
+          else
+            gh issue create --title "${TITLE}" --body "${BODY}"
+          fi
+          echo "::error::${BODY}"
+
+      - name: Close the refresh incident after recovery
+        if: needs.refresh.result == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          TITLE="[automation] Comparison refresh failed"
+          ISSUE_NUMBER="$(gh issue list --state open --search "\"${TITLE}\" in:title" --json number,title --jq ".[] | select(.title == \"${TITLE}\") | .number" | head -n 1)"
+          if [ -n "${ISSUE_NUMBER}" ]; then
+            gh issue close "${ISSUE_NUMBER}" --comment "The comparison refresh recovered successfully: ${RUN_URL}"
+          fi

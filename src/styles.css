@@ -45,8 +45,9 @@ a:hover {
 
 a:focus-visible,
 .table-frame:focus-visible {
-  outline: 3px solid var(--yellow);
+  outline: 3px solid var(--focus);
   outline-offset: 3px;
+  box-shadow: 0 0 0 6px var(--yellow);
 }
 
 .shell {
@@ -67,6 +68,12 @@ a:focus-visible,
 
 .skip-link:focus {
   transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 .masthead {

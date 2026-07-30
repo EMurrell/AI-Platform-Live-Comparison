@@ -115,6 +115,20 @@ if (typeof data.seed_verified !== "boolean") {
   errors.push("seed_verified must be true or false.");
 }
 
+if (data.seed_verified) {
+  if (
+    !data.seed_verification
+    || typeof data.seed_verification.actor !== "string"
+    || !data.seed_verification.actor
+    || Number.isNaN(new Date(data.seed_verification.verified_at).getTime())
+  ) {
+    errors.push("A verified seed must include a valid seed_verification actor and timestamp.");
+  }
+  if (data.cells.some(cell => cell.change_kind === "unverified_seed")) {
+    errors.push("A verified seed cannot contain machine-generated unverified_seed cells.");
+  }
+}
+
 if (
   data.last_successful_update !== null
   && (

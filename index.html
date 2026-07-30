@@ -56,8 +56,9 @@ a:hover {
 
 a:focus-visible,
 .table-frame:focus-visible {
-  outline: 3px solid var(--yellow);
+  outline: 3px solid var(--focus);
   outline-offset: 3px;
+  box-shadow: 0 0 0 6px var(--yellow);
 }
 
 .shell {
@@ -78,6 +79,12 @@ a:focus-visible,
 
 .skip-link:focus {
   transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 .masthead {
@@ -845,8 +852,8 @@ footer strong {
         </div>
         <div class="update-card" aria-label="Data freshness">
           <span class="update-card__label">Verification status</span>
-          <strong class="update-card__date">Unverified seed</strong>
-          <span class="update-card__status">No successful automated refresh or human seed verification</span>
+          <strong class="update-card__date">Baseline review pending</strong>
+          <span class="update-card__status">Source research complete; approval and automated refresh pending</span>
         </div>
       </div>
     </section>
@@ -863,7 +870,7 @@ footer strong {
       </div>
     </section>
 
-    <aside class="stale-alert" role="status"><strong>This comparison is unverified.</strong>The machine-generated seed has not been human-verified, and no automated refresh has completed successfully.</aside>
+    <aside class="stale-alert" role="status"><strong>This comparison is awaiting baseline approval.</strong>Source-backed research is complete. One-time human approval and the first complete automated refresh are still outstanding.</aside>
 
     <section class="comparison shell" id="comparison" aria-labelledby="comparison-title">
       <div class="section-heading">
@@ -1010,13 +1017,13 @@ footer strong {
       <span class="attribute__label">Seat minimum</span>
       <span class="attribute__description">Smallest supported purchase.</span>
     </th>
-    <td class="cell cell--changed">
-    <p class="cell__answer">2 users</p>
+    <td class="cell cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
+    <p class="cell__answer">2 standard ChatGPT seats</p>
     
-    <p class="cell__note">Stated as a minimum purchase of 2 standard ChatGPT seats.</p>
+    <p class="cell__note">The two-seat minimum applies to standard ChatGPT seats. Legacy Codex-only Business configurations are a separate exception and do not provide ChatGPT access.</p>
     <div class="cell__meta">
-      <a class="source-link" href="https://help.openai.com/en/articles/8792536-managing-billing-and-seats-in-chatgpt-business" rel="noopener noreferrer">Source</a>
-      <span class="confidence">high confidence</span>
+      <a class="source-link" href="https://help.openai.com/en/articles/8792828-what-is-chatgpt-team/" rel="noopener noreferrer">Source</a>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
 <td class="cell cell--changed">
@@ -1028,31 +1035,31 @@ footer strong {
       <span class="confidence">high confidence</span>
     </div>
   </td>
-<td class="cell cell--changed cell--verify"><span class="verify-flag">Unverified machine-generated seed</span>
+<td class="cell cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
     <p class="cell__answer">1 user</p>
     
-    <p class="cell__note">Not yet verified against the official source. Carried over from the machine-generated seed.</p>
+    <p class="cell__note">Google identifies Business Standard as supporting organizations with 1 to 300 users.</p>
     <div class="cell__meta">
-      <a class="source-link" href="https://workspace.google.com/pricing.html" rel="noopener noreferrer">Source</a>
-      <span class="confidence">Unverified seed</span>
+      <a class="source-link" href="https://knowledge.workspace.google.com/admin/getting-started/editions/compare-business-editions" rel="noopener noreferrer">Source</a>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
-<td class="cell cell--changed cell--verify"><span class="verify-flag">Unverified machine-generated seed</span>
+<td class="cell cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
     <p class="cell__answer">1 user</p>
     
-    <p class="cell__note">Not yet verified against the official source. Carried over from the machine-generated seed.</p>
+    <p class="cell__note">Microsoft states no licence minimum and a range of 1 to 300 licences for standalone Copilot Business.</p>
     <div class="cell__meta">
-      <a class="source-link" href="https://learn.microsoft.com/en-us/partner-center/announcements/2025-december" rel="noopener noreferrer">Source</a>
-      <span class="confidence">Unverified seed</span>
+      <a class="source-link" href="https://learn.microsoft.com/en-us/partner-center/announcements/2026-july" rel="noopener noreferrer">Source</a>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
-<td class="cell cell--changed cell--verify"><span class="verify-flag">Unverified machine-generated seed</span>
+<td class="cell cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
     <p class="cell__answer">No seat minimum</p>
     
-    <p class="cell__note">Not a fixed product. Requires a locked reference architecture before any value can be stated.</p>
+    <p class="cell__note">The model API is usage-based rather than licensed per person. Implementation, hosting and mailbox-provider costs remain separate.</p>
     <div class="cell__meta">
-      <a class="source-link" href="https://developers.openai.com/api/docs/quickstart" rel="noopener noreferrer">Source</a>
-      <span class="confidence">Unverified seed</span>
+      <a class="source-link" href="https://developers.openai.com/api/docs/models/gpt-5.6-sol" rel="noopener noreferrer">Source</a>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
   </tr>
@@ -1061,31 +1068,31 @@ footer strong {
       <span class="attribute__label">Prerequisite subscription</span>
       <span class="attribute__description">What must already be licensed.</span>
     </th>
-    <td class="cell cell--changed cell--verify"><span class="verify-flag">Unverified machine-generated seed</span>
-    <p class="cell__answer">None</p>
+    <td class="cell cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
+    <p class="cell__answer">None; purchased directly as a self-serve Business workspace</p>
     
-    <p class="cell__note">Not yet verified against the official source. Carried over from the machine-generated seed.</p>
+    <p class="cell__note">No other paid OpenAI subscription is required. A ChatGPT account and a minimum purchase of two standard seats are required.</p>
     <div class="cell__meta">
-      <a class="source-link" href="https://openai.com/business/chatgpt-pricing/" rel="noopener noreferrer">Source</a>
-      <span class="confidence">Unverified seed</span>
+      <a class="source-link" href="https://help.openai.com/en/articles/8980713-how-do-i-sign-up-for-chatgpt-team" rel="noopener noreferrer">Source</a>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
-<td class="cell cell--changed cell--verify"><span class="verify-flag">Unverified machine-generated seed</span>
-    <p class="cell__answer">None</p>
+<td class="cell cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
+    <p class="cell__answer">None; create Team directly with a business email</p>
     
-    <p class="cell__note">Not yet verified against the official source. Carried over from the machine-generated seed.</p>
+    <p class="cell__note">No Pro or Max subscription is required. The creator must use a business email, and members must use an allowed organization domain.</p>
     <div class="cell__meta">
-      <a class="source-link" href="https://support.claude.com/en/articles/9266767-what-is-the-team-plan" rel="noopener noreferrer">Source</a>
-      <span class="confidence">Unverified seed</span>
+      <a class="source-link" href="https://support.claude.com/en/articles/9267247-get-started-with-the-team-plan" rel="noopener noreferrer">Source</a>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
-<td class="cell cell--changed cell--verify"><span class="verify-flag">Unverified machine-generated seed</span>
-    <p class="cell__answer">Google Workspace Business Standard, included in this price</p>
+<td class="cell cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
+    <p class="cell__answer">Google Workspace Business Standard; Gemini included, with no separate add-on</p>
     
-    <p class="cell__note">Not yet verified against the official source. Carried over from the machine-generated seed.</p>
+    <p class="cell__note">The compared price is the Workspace Business Standard subscription itself. Google discontinued separate Gemini Business add-on packaging.</p>
     <div class="cell__meta">
       <a class="source-link" href="https://workspace.google.com/blog/product-announcements/empowering-businesses-with-ai" rel="noopener noreferrer">Source</a>
-      <span class="confidence">Unverified seed</span>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
 <td class="cell cell--changed">
@@ -1097,13 +1104,13 @@ footer strong {
       <span class="confidence">high confidence</span>
     </div>
   </td>
-<td class="cell cell--changed cell--verify"><span class="verify-flag">Unverified machine-generated seed</span>
+<td class="cell cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
     <p class="cell__answer">API billing, hosting, OAuth and implementation work</p>
     
-    <p class="cell__note">Not a fixed product. Requires a locked reference architecture before any value can be stated.</p>
+    <p class="cell__note">This is an architecture, not a packaged subscription. It needs an API project and billing plus a hosted application, mailbox OAuth permissions and operating controls.</p>
     <div class="cell__meta">
       <a class="source-link" href="https://developers.openai.com/api/docs/quickstart" rel="noopener noreferrer">Source</a>
-      <span class="confidence">Unverified seed</span>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
   </tr>
@@ -1112,49 +1119,49 @@ footer strong {
       <span class="attribute__label">Native mailbox access</span>
       <span class="attribute__description">Gmail, Outlook, both or neither.</span>
     </th>
-    <td class="cell cell--changed cell--verify"><span class="verify-flag">Unverified machine-generated seed</span>
+    <td class="cell cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
     <p class="cell__answer">Gmail and Outlook</p>
     
-    <p class="cell__note">Not yet verified against the official source. Carried over from the machine-generated seed.</p>
+    <p class="cell__note">Both require the corresponding connected app and may depend on workspace and administrator settings.</p>
     <div class="cell__meta">
       <a class="source-link" href="https://openai.com/business/plugins/" rel="noopener noreferrer">Source</a>
-      <span class="confidence">Unverified seed</span>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
-<td class="cell cell--changed cell--verify"><span class="verify-flag">Unverified machine-generated seed</span>
+<td class="cell cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
     <p class="cell__answer">Gmail and Outlook</p>
     
-    <p class="cell__note">Not yet verified against the official source. Carried over from the machine-generated seed.</p>
+    <p class="cell__note">Gmail uses the Google connector. Outlook requires a work Microsoft 365 account tied to an Entra tenant. Team owners or administrators must enable the connectors.</p>
     <div class="cell__meta">
       <a class="source-link" href="https://claude.com/docs/connectors/getting-started" rel="noopener noreferrer">Source</a>
-      <span class="confidence">Unverified seed</span>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
-<td class="cell cell--changed cell--verify"><span class="verify-flag">Unverified machine-generated seed</span>
+<td class="cell cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
     <p class="cell__answer">Gmail</p>
     
-    <p class="cell__note">Not yet verified against the official source. Carried over from the machine-generated seed.</p>
+    <p class="cell__note">Gemini is embedded in Gmail. Access depends on the Workspace edition and administrator configuration; no native Outlook mailbox access is documented.</p>
     <div class="cell__meta">
-      <a class="source-link" href="https://support.google.com/mail/answer/14355636" rel="noopener noreferrer">Source</a>
-      <span class="confidence">Unverified seed</span>
+      <a class="source-link" href="https://workspace.google.com/intl/en/products/gmail/ai/" rel="noopener noreferrer">Source</a>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
-<td class="cell cell--changed cell--verify"><span class="verify-flag">Unverified machine-generated seed</span>
+<td class="cell cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
     <p class="cell__answer">Outlook</p>
     
-    <p class="cell__note">Not yet verified against the official source. Carried over from the machine-generated seed.</p>
+    <p class="cell__note">Microsoft documents Copilot grounded in Outlook data and embedded in Outlook. No native Gmail mailbox access is documented.</p>
     <div class="cell__meta">
       <a class="source-link" href="https://support.microsoft.com/en-us/outlook/frequently-asked-questions-about-copilot-in-outlook" rel="noopener noreferrer">Source</a>
-      <span class="confidence">Unverified seed</span>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
-<td class="cell cell--changed cell--verify"><span class="verify-flag">Unverified machine-generated seed</span>
+<td class="cell cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
     <p class="cell__answer">Gmail and Outlook, when integrated</p>
     
-    <p class="cell__note">Not a fixed product. Requires a locked reference architecture before any value can be stated.</p>
+    <p class="cell__note">Gmail access is provided by the Gmail API and Outlook access by Microsoft Graph. Each requires its own application registration, OAuth scopes and administrator consent policy.</p>
     <div class="cell__meta">
-      <a class="source-link" href="https://developers.openai.com/api/docs/guides/tools-connectors-mcp" rel="noopener noreferrer">Source</a>
-      <span class="confidence">Unverified seed</span>
+      <a class="source-link" href="https://developers.google.com/workspace/gmail/api/guides" rel="noopener noreferrer">Source</a>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
   </tr>
@@ -1163,49 +1170,49 @@ footer strong {
       <span class="attribute__label">Can act on email</span>
       <span class="attribute__description">Label, archive, move, draft or send.</span>
     </th>
-    <td class="cell cell--emphasis cell--changed">
-    <p class="cell__answer">Searches and retrieves messages. Creates and manages contacts. Message actions are not documented.</p>
+    <td class="cell cell--emphasis cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
+    <p class="cell__answer">Drafts and sends Gmail or Outlook email with user confirmation. Outlook shared mailboxes also support mark and move actions.</p>
     
-    <p class="cell__note">The app requests Mail.ReadWrite and Mail.Send scopes, but the documented capability list covers contact actions only, not moving, marking or sending messages.</p>
+    <p class="cell__note">ChatGPT creates a draft and the user chooses whether to send it. Shared or delegated Outlook actions depend on Microsoft permissions and workspace settings.</p>
     <div class="cell__meta">
-      <a class="source-link" href="https://help.openai.com/en/articles/12512241-outlook-email-and-calendar-app-for-chatgpt" rel="noopener noreferrer">Source</a>
-      <span class="confidence">high confidence</span>
+      <a class="source-link" href="https://help.openai.com/en/articles/6825453-how-can-i-integrate-chatgpt-with-my-app" rel="noopener noreferrer">Source</a>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
-<td class="cell cell--emphasis cell--changed">
-    <p class="cell__answer">Read only. Cannot create, send or modify email.</p>
+<td class="cell cell--emphasis cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
+    <p class="cell__answer">Gmail: drafts and organizes, but cannot send. Outlook: drafts, sends and organizes when administrator-enabled.</p>
     
-    <p class="cell__note">Listed under Limitations: Claude cannot create, send, or modify emails. Search and analysis only.</p>
+    <p class="cell__note">Gmail actions require explicit approval and sending remains manual. Microsoft 365 write tools can send and organize Outlook mail when an administrator enables them; attachments are not supported in write actions.</p>
     <div class="cell__meta">
-      <a class="source-link" href="https://claude.com/docs/connectors/google/gmail" rel="noopener noreferrer">Source</a>
-      <span class="confidence">high confidence</span>
+      <a class="source-link" href="https://support.claude.com/en/articles/10166901-use-google-workspace-connectors" rel="noopener noreferrer">Source</a>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
-<td class="cell cell--emphasis cell--changed">
-    <p class="cell__answer">Drafts, suggests replies and summarises. You send and file.</p>
+<td class="cell cell--emphasis cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
+    <p class="cell__answer">Summarises, suggests replies and drafts emails. The user sends and files.</p>
     
-    <p class="cell__note">No documented ability to send, label, archive or move messages.</p>
+    <p class="cell__note">Embedded Gemini in Gmail can generate drafts. The standalone Gemini app&#039;s Gmail Connected App cannot create drafts or delete email. Neither source documents autonomous sending, labelling, archiving or moving.</p>
     <div class="cell__meta">
       <a class="source-link" href="https://support.google.com/mail/answer/14355636" rel="noopener noreferrer">Source</a>
-      <span class="confidence">high confidence</span>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
-<td class="cell cell--emphasis cell--changed">
-    <p class="cell__answer">Pin, flag, archive, delete, mark read or unread. Drafts and prioritises incoming mail.</p>
+<td class="cell cell--emphasis cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
+    <p class="cell__answer">Pins, flags, archives, deletes and marks email read or unread; drafts and prioritises.</p>
     
-    <p class="cell__note">Actions work on single or multiple emails. Sending remains user-initiated.</p>
+    <p class="cell__note">Actions work on individual or multiple messages and update Outlook. Larger bulk actions can require confirmation. Email triage is currently documented as English-only; sending remains user-initiated.</p>
     <div class="cell__meta">
       <a class="source-link" href="https://support.microsoft.com/en-us/outlook/frequently-asked-questions-about-copilot-in-outlook" rel="noopener noreferrer">Source</a>
-      <span class="confidence">high confidence</span>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
-<td class="cell cell--emphasis cell--changed cell--verify"><span class="verify-flag">Unverified machine-generated seed</span>
+<td class="cell cell--emphasis cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
     <p class="cell__answer">Configurable: label, archive, move, draft or send with chosen scopes and approvals</p>
     
-    <p class="cell__note">Not a fixed product. Requires a locked reference architecture before any value can be stated.</p>
+    <p class="cell__note">Both mailbox APIs document read, draft, send and organization actions. The implemented scopes, approval gates and safety rules determine what a custom application can actually do.</p>
     <div class="cell__meta">
       <a class="source-link" href="https://developers.google.com/workspace/gmail/api/guides" rel="noopener noreferrer">Source</a>
-      <span class="confidence">Unverified seed</span>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
   </tr>
@@ -1232,31 +1239,31 @@ footer strong {
       <span class="confidence">high confidence</span>
     </div>
   </td>
-<td class="cell cell--emphasis cell--changed cell--verify"><span class="verify-flag">Unverified machine-generated seed</span>
-    <p class="cell__answer">Yes, with scheduled actions</p>
+<td class="cell cell--emphasis cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
+    <p class="cell__answer">Yes—up to 10 scheduled actions</p>
     
-    <p class="cell__note">Not yet verified against the official source. Carried over from the machine-generated seed.</p>
+    <p class="cell__note">Business Standard qualifies for scheduled actions. Keep Activity must be enabled, and the administrator controls availability. This is scheduled execution, not arbitrary event-driven automation.</p>
     <div class="cell__meta">
-      <a class="source-link" href="https://support.google.com/gemini/answer/16316416?hl=en" rel="noopener noreferrer">Source</a>
-      <span class="confidence">Unverified seed</span>
+      <a class="source-link" href="https://support.google.com/gemini/answer/16316416?co=GENIE.Platform%3DDesktop&amp;hl=en-CA" rel="noopener noreferrer">Source</a>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
-<td class="cell cell--emphasis cell--changed cell--verify"><span class="verify-flag">Unverified machine-generated seed</span>
-    <p class="cell__answer">Yes, with scheduled prompts; richer workflows need agent setup</p>
+<td class="cell cell--emphasis cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
+    <p class="cell__answer">Yes—up to 10 scheduled prompts</p>
     
-    <p class="cell__note">Not yet verified against the official source. Carried over from the machine-generated seed.</p>
+    <p class="cell__note">Requires a Microsoft 365 Copilot licence. Scheduled prompts can run through Copilot Chat, Teams or Outlook; administrators can disable Optional Connected Experiences.</p>
     <div class="cell__meta">
-      <a class="source-link" href="https://support.microsoft.com/en-us/microsoft-365-copilot/schedule-your-most-used-copilot-prompts" rel="noopener noreferrer">Source</a>
-      <span class="confidence">Unverified seed</span>
+      <a class="source-link" href="https://support.microsoft.com/en-US/Microsoft-365-Copilot/schedule-your-most-used-copilot-prompts" rel="noopener noreferrer">Source</a>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
-<td class="cell cell--emphasis cell--changed cell--verify"><span class="verify-flag">Unverified machine-generated seed</span>
-    <p class="cell__answer">Yes, with a scheduler, event trigger or queue</p>
+<td class="cell cell--emphasis cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
+    <p class="cell__answer">Yes, if built with a scheduler or mailbox change notifications</p>
     
-    <p class="cell__note">Not a fixed product. Requires a locked reference architecture before any value can be stated.</p>
+    <p class="cell__note">Gmail and Microsoft Graph provide mailbox change notifications, but the custom application must supply the scheduler or webhook service, retries, approvals and monitoring.</p>
     <div class="cell__meta">
-      <a class="source-link" href="https://developers.openai.com/api/docs/guides/background" rel="noopener noreferrer">Source</a>
-      <span class="confidence">Unverified seed</span>
+      <a class="source-link" href="https://developers.google.com/workspace/gmail/api/guides/push" rel="noopener noreferrer">Source</a>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
   </tr>
@@ -1274,40 +1281,40 @@ footer strong {
       <span class="confidence">high confidence</span>
     </div>
   </td>
-<td class="cell cell--changed cell--verify"><span class="verify-flag">Unverified machine-generated seed</span>
+<td class="cell cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
     <p class="cell__answer">No, by default</p>
     
-    <p class="cell__note">Not yet verified against the official source. Carried over from the machine-generated seed.</p>
+    <p class="cell__note">Team is a commercial Claude for Work offering. Chats and coding sessions are not used for training unless the organization explicitly participates or submits opted-in content.</p>
     <div class="cell__meta">
       <a class="source-link" href="https://claude.com/pricing" rel="noopener noreferrer">Source</a>
-      <span class="confidence">Unverified seed</span>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
-<td class="cell cell--changed cell--verify"><span class="verify-flag">Unverified machine-generated seed</span>
-    <p class="cell__answer">No, without permission</p>
+<td class="cell cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
+    <p class="cell__answer">No, unless the customer grants permission</p>
     
-    <p class="cell__note">Not yet verified against the official source. Carried over from the machine-generated seed.</p>
+    <p class="cell__note">This applies to Business Standard&#039;s core-service, enterprise-protected Gemini use. Google expressly retains a permission qualifier.</p>
     <div class="cell__meta">
       <a class="source-link" href="https://workspace.google.com/security/ai-privacy/" rel="noopener noreferrer">Source</a>
-      <span class="confidence">Unverified seed</span>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
-<td class="cell cell--changed cell--verify"><span class="verify-flag">Unverified machine-generated seed</span>
+<td class="cell cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
     <p class="cell__answer">No</p>
     
-    <p class="cell__note">Not yet verified against the official source. Carried over from the machine-generated seed.</p>
+    <p class="cell__note">Under enterprise data protection, prompts, responses and Microsoft Graph-grounded organizational data are excluded from foundation-model training.</p>
     <div class="cell__meta">
-      <a class="source-link" href="https://learn.microsoft.com/en-us/copilot/faq" rel="noopener noreferrer">Source</a>
-      <span class="confidence">Unverified seed</span>
+      <a class="source-link" href="https://learn.microsoft.com/en-us/microsoft-365/copilot/enterprise-data-protection" rel="noopener noreferrer">Source</a>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
-<td class="cell cell--changed cell--verify"><span class="verify-flag">Unverified machine-generated seed</span>
+<td class="cell cell--changed cell--verify"><span class="verify-flag">Source-backed; awaiting baseline approval</span>
     <p class="cell__answer">No, by default</p>
     
-    <p class="cell__note">Not a fixed product. Requires a locked reference architecture before any value can be stated.</p>
+    <p class="cell__note">OpenAI states that API inputs and outputs are not used to train models by default unless the customer explicitly opts in. Default abuse-monitoring retention still applies.</p>
     <div class="cell__meta">
       <a class="source-link" href="https://platform.openai.com/docs/models/default-usage-policies-by-endpoint" rel="noopener noreferrer">Source</a>
-      <span class="confidence">Unverified seed</span>
+      <span class="confidence">Awaiting approval</span>
     </div>
   </td>
   </tr>
@@ -1350,7 +1357,8 @@ footer strong {
         </div>
       </div>
       <ol class="changelog__list">
-        <li><time class="changelog__date" datetime="2026-07-29">29 July 2026</time><span class="changelog__summary">Pricing rows changed to the amounts and currencies shown to Canadian customers. Currency conversion was removed; vendor ambiguities remain explicitly unverified.</span></li>
+        <li><time class="changelog__date" datetime="2026-07-30">30 July 2026</time><span class="changelog__summary">Replaced the remaining machine-generated non-price seed claims with source-backed research. Corrected current ChatGPT and Claude email-action capabilities; one-time baseline approval is still pending.</span></li>
+<li><time class="changelog__date" datetime="2026-07-29">29 July 2026</time><span class="changelog__summary">Pricing rows changed to the amounts and currencies shown to Canadian customers. Currency conversion was removed; vendor ambiguities remain explicitly unverified.</span></li>
 <li><time class="changelog__date" datetime="2026-07-29">29 July 2026</time><span class="changelog__summary">Unverified machine-generated seed added. No successful refresh or human verification has occurred.</span></li>
       </ol>
     </section>
@@ -1364,7 +1372,7 @@ footer strong {
       </div>
       <div>
         <p><strong>Verification status</strong><br>No verified publication date</p>
-        <p><strong>Method</strong><br>Partially verified. Pricing rows were read directly from official vendor pages for a Canadian customer on 29 July 2026; ambiguous vendor wording is explicitly marked unverified. Other unverified rows remain from the original machine-generated seed.</p>
+        <p><strong>Method</strong><br>A source-backed baseline was prepared from official vendor pages on 30 July 2026 and is awaiting one-time human approval. Ambiguous vendor pricing remains explicitly unverified. No automated refresh has completed successfully.</p>
       </div>
     </div>
   </footer>

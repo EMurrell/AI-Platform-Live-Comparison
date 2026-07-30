@@ -2,7 +2,7 @@
   "schema_version": 2,
   "seed_verified": false,
   "last_successful_update": null,
-  "method": "Partially verified. Pricing rows were read directly from official vendor pages for a Canadian customer on 29 July 2026; ambiguous vendor wording is explicitly marked unverified. Other unverified rows remain from the original machine-generated seed.",
+  "method": "A source-backed baseline was prepared from official vendor pages on 30 July 2026 and is awaiting one-time human approval. Ambiguous vendor pricing remains explicitly unverified. No automated refresh has completed successfully.",
   "providers": [
     {
       "id": "chatgpt-business",
@@ -157,25 +157,25 @@
       "provider": "chatgpt-business",
       "attribute": "seat_minimum",
       "value": 2,
-      "display": "2 users",
-      "source_url": "https://help.openai.com/en/articles/8792536-managing-billing-and-seats-in-chatgpt-business",
+      "display": "2 standard ChatGPT seats",
+      "source_url": "https://help.openai.com/en/articles/8792828-what-is-chatgpt-team/",
       "confidence": "high",
-      "checked": "2026-07-29",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Stated as a minimum purchase of 2 standard ChatGPT seats.",
-      "change_kind": "human_verified"
+      "note": "The two-seat minimum applies to standard ChatGPT seats. Legacy Codex-only Business configurations are a separate exception and do not provide ChatGPT access.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "chatgpt-business",
       "attribute": "prerequisite",
       "value": "none",
-      "display": "None",
-      "source_url": "https://openai.com/business/chatgpt-pricing/",
-      "confidence": "unverified",
-      "checked": "2026-07-29",
+      "display": "None; purchased directly as a self-serve Business workspace",
+      "source_url": "https://help.openai.com/en/articles/8980713-how-do-i-sign-up-for-chatgpt-team",
+      "confidence": "high",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Not yet verified against the official source. Carried over from the machine-generated seed.",
-      "change_kind": "unverified_seed"
+      "note": "No other paid OpenAI subscription is required. A ChatGPT account and a minimum purchase of two standard seats are required.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "chatgpt-business",
@@ -183,23 +183,27 @@
       "value": "both",
       "display": "Gmail and Outlook",
       "source_url": "https://openai.com/business/plugins/",
-      "confidence": "unverified",
-      "checked": "2026-07-29",
+      "sources": [
+        "https://openai.com/business/plugins/",
+        "https://help.openai.com/en/articles/6825453-how-can-i-integrate-chatgpt-with-my-app"
+      ],
+      "confidence": "high",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Not yet verified against the official source. Carried over from the machine-generated seed.",
-      "change_kind": "unverified_seed"
+      "note": "Both require the corresponding connected app and may depend on workspace and administrator settings.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "chatgpt-business",
       "attribute": "mailbox_actions",
-      "value": "contacts_write_messages_read",
-      "display": "Searches and retrieves messages. Creates and manages contacts. Message actions are not documented.",
-      "source_url": "https://help.openai.com/en/articles/12512241-outlook-email-and-calendar-app-for-chatgpt",
+      "value": "draft_send_with_confirmation_and_outlook_shared_actions",
+      "display": "Drafts and sends Gmail or Outlook email with user confirmation. Outlook shared mailboxes also support mark and move actions.",
+      "source_url": "https://help.openai.com/en/articles/6825453-how-can-i-integrate-chatgpt-with-my-app",
       "confidence": "high",
-      "checked": "2026-07-29",
-      "last_changed": "2026-07-29",
-      "note": "The app requests Mail.ReadWrite and Mail.Send scopes, but the documented capability list covers contact actions only, not moving, marking or sending messages.",
-      "change_kind": "human_verified"
+      "checked": "2026-07-30",
+      "last_changed": "2026-07-30",
+      "note": "ChatGPT creates a draft and the user chooses whether to send it. Shared or delegated Outlook actions depend on Microsoft permissions and workspace settings.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "chatgpt-business",
@@ -278,13 +282,13 @@
       "provider": "claude-team",
       "attribute": "prerequisite",
       "value": "none",
-      "display": "None",
-      "source_url": "https://support.claude.com/en/articles/9266767-what-is-the-team-plan",
-      "confidence": "unverified",
-      "checked": "2026-07-29",
+      "display": "None; create Team directly with a business email",
+      "source_url": "https://support.claude.com/en/articles/9267247-get-started-with-the-team-plan",
+      "confidence": "high",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Not yet verified against the official source. Carried over from the machine-generated seed.",
-      "change_kind": "unverified_seed"
+      "note": "No Pro or Max subscription is required. The creator must use a business email, and members must use an allowed organization domain.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "claude-team",
@@ -292,23 +296,31 @@
       "value": "both",
       "display": "Gmail and Outlook",
       "source_url": "https://claude.com/docs/connectors/getting-started",
-      "confidence": "unverified",
-      "checked": "2026-07-29",
+      "sources": [
+        "https://claude.com/docs/connectors/getting-started",
+        "https://support.claude.com/en/articles/15183774-connect-to-microsoft-365"
+      ],
+      "confidence": "high",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Not yet verified against the official source. Carried over from the machine-generated seed.",
-      "change_kind": "unverified_seed"
+      "note": "Gmail uses the Google connector. Outlook requires a work Microsoft 365 account tied to an Entra tenant. Team owners or administrators must enable the connectors.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "claude-team",
       "attribute": "mailbox_actions",
-      "value": "read_only",
-      "display": "Read only. Cannot create, send or modify email.",
-      "source_url": "https://claude.com/docs/connectors/google/gmail",
+      "value": "gmail_draft_organize_outlook_write_tools",
+      "display": "Gmail: drafts and organizes, but cannot send. Outlook: drafts, sends and organizes when administrator-enabled.",
+      "source_url": "https://support.claude.com/en/articles/10166901-use-google-workspace-connectors",
+      "sources": [
+        "https://support.claude.com/en/articles/10166901-use-google-workspace-connectors",
+        "https://support.claude.com/en/articles/15183774-connect-to-microsoft-365"
+      ],
       "confidence": "high",
-      "checked": "2026-07-29",
-      "last_changed": "2026-07-29",
-      "note": "Listed under Limitations: Claude cannot create, send, or modify emails. Search and analysis only.",
-      "change_kind": "human_verified"
+      "checked": "2026-07-30",
+      "last_changed": "2026-07-30",
+      "note": "Gmail actions require explicit approval and sending remains manual. Microsoft 365 write tools can send and organize Outlook mail when an administrator enables them; attachments are not supported in write actions.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "claude-team",
@@ -328,11 +340,15 @@
       "value": false,
       "display": "No, by default",
       "source_url": "https://claude.com/pricing",
-      "confidence": "unverified",
-      "checked": "2026-07-29",
+      "sources": [
+        "https://claude.com/pricing",
+        "https://privacy.claude.com/en/articles/7996885-how-do-you-use-personal-data-in-model-training"
+      ],
+      "confidence": "high",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Not yet verified against the official source. Carried over from the machine-generated seed.",
-      "change_kind": "unverified_seed"
+      "note": "Team is a commercial Claude for Work offering. Chats and coding sessions are not used for training unless the organization explicitly participates or submits opted-in content.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "gemini-workspace",
@@ -395,72 +411,84 @@
       "attribute": "seat_minimum",
       "value": 1,
       "display": "1 user",
-      "source_url": "https://workspace.google.com/pricing.html",
-      "confidence": "unverified",
-      "checked": "2026-07-29",
+      "source_url": "https://knowledge.workspace.google.com/admin/getting-started/editions/compare-business-editions",
+      "confidence": "high",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Not yet verified against the official source. Carried over from the machine-generated seed.",
-      "change_kind": "unverified_seed"
+      "note": "Google identifies Business Standard as supporting organizations with 1 to 300 users.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "gemini-workspace",
       "attribute": "prerequisite",
       "value": "google_workspace_business_standard",
-      "display": "Google Workspace Business Standard, included in this price",
+      "display": "Google Workspace Business Standard; Gemini included, with no separate add-on",
       "source_url": "https://workspace.google.com/blog/product-announcements/empowering-businesses-with-ai",
-      "confidence": "unverified",
-      "checked": "2026-07-29",
+      "sources": [
+        "https://workspace.google.com/blog/product-announcements/empowering-businesses-with-ai",
+        "https://knowledge.workspace.google.com/admin/generative-ai/workspace-with-gemini/gemini-ai-features-now-included-in-google-workspace-subscriptions"
+      ],
+      "confidence": "high",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Not yet verified against the official source. Carried over from the machine-generated seed.",
-      "change_kind": "unverified_seed"
+      "note": "The compared price is the Workspace Business Standard subscription itself. Google discontinued separate Gemini Business add-on packaging.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "gemini-workspace",
       "attribute": "mailbox_access",
       "value": "gmail",
       "display": "Gmail",
-      "source_url": "https://support.google.com/mail/answer/14355636",
-      "confidence": "unverified",
-      "checked": "2026-07-29",
+      "source_url": "https://workspace.google.com/intl/en/products/gmail/ai/",
+      "confidence": "high",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Not yet verified against the official source. Carried over from the machine-generated seed.",
-      "change_kind": "unverified_seed"
+      "note": "Gemini is embedded in Gmail. Access depends on the Workspace edition and administrator configuration; no native Outlook mailbox access is documented.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "gemini-workspace",
       "attribute": "mailbox_actions",
       "value": "draft_only",
-      "display": "Drafts, suggests replies and summarises. You send and file.",
+      "display": "Summarises, suggests replies and drafts emails. The user sends and files.",
       "source_url": "https://support.google.com/mail/answer/14355636",
+      "sources": [
+        "https://support.google.com/mail/answer/14355636",
+        "https://support.google.com/gemini/answer/14959807?co=GENIE.Platform%3DDesktop&hl=en"
+      ],
       "confidence": "high",
-      "checked": "2026-07-29",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "No documented ability to send, label, archive or move messages.",
-      "change_kind": "human_verified"
+      "note": "Embedded Gemini in Gmail can generate drafts. The standalone Gemini app's Gmail Connected App cannot create drafts or delete email. Neither source documents autonomous sending, labelling, archiving or moving.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "gemini-workspace",
       "attribute": "unattended",
       "value": "scheduled",
-      "display": "Yes, with scheduled actions",
-      "source_url": "https://support.google.com/gemini/answer/16316416?hl=en",
-      "confidence": "unverified",
-      "checked": "2026-07-29",
+      "display": "Yes—up to 10 scheduled actions",
+      "source_url": "https://support.google.com/gemini/answer/16316416?co=GENIE.Platform%3DDesktop&hl=en-CA",
+      "sources": [
+        "https://support.google.com/gemini/answer/16316416?co=GENIE.Platform%3DDesktop&hl=en-CA",
+        "https://support.google.com/gemini/answer/14620100?co=DASHER._Family%3DBusiness-Enterprise&hl=en"
+      ],
+      "confidence": "high",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Not yet verified against the official source. Carried over from the machine-generated seed.",
-      "change_kind": "unverified_seed"
+      "note": "Business Standard qualifies for scheduled actions. Keep Activity must be enabled, and the administrator controls availability. This is scheduled execution, not arbitrary event-driven automation.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "gemini-workspace",
       "attribute": "training",
       "value": false,
-      "display": "No, without permission",
+      "display": "No, unless the customer grants permission",
       "source_url": "https://workspace.google.com/security/ai-privacy/",
-      "confidence": "unverified",
-      "checked": "2026-07-29",
+      "confidence": "high",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Not yet verified against the official source. Carried over from the machine-generated seed.",
-      "change_kind": "unverified_seed"
+      "note": "This applies to Business Standard's core-service, enterprise-protected Gemini use. Google expressly retains a permission qualifier.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "m365-copilot",
@@ -518,12 +546,12 @@
       "attribute": "seat_minimum",
       "value": 1,
       "display": "1 user",
-      "source_url": "https://learn.microsoft.com/en-us/partner-center/announcements/2025-december",
-      "confidence": "unverified",
-      "checked": "2026-07-29",
+      "source_url": "https://learn.microsoft.com/en-us/partner-center/announcements/2026-july",
+      "confidence": "high",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Not yet verified against the official source. Carried over from the machine-generated seed.",
-      "change_kind": "unverified_seed"
+      "note": "Microsoft states no licence minimum and a range of 1 to 300 licences for standalone Copilot Business.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "m365-copilot",
@@ -543,47 +571,51 @@
       "value": "outlook",
       "display": "Outlook",
       "source_url": "https://support.microsoft.com/en-us/outlook/frequently-asked-questions-about-copilot-in-outlook",
-      "confidence": "unverified",
-      "checked": "2026-07-29",
+      "confidence": "high",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Not yet verified against the official source. Carried over from the machine-generated seed.",
-      "change_kind": "unverified_seed"
+      "note": "Microsoft documents Copilot grounded in Outlook data and embedded in Outlook. No native Gmail mailbox access is documented.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "m365-copilot",
       "attribute": "mailbox_actions",
       "value": "triage_actions",
-      "display": "Pin, flag, archive, delete, mark read or unread. Drafts and prioritises incoming mail.",
+      "display": "Pins, flags, archives, deletes and marks email read or unread; drafts and prioritises.",
       "source_url": "https://support.microsoft.com/en-us/outlook/frequently-asked-questions-about-copilot-in-outlook",
+      "sources": [
+        "https://support.microsoft.com/en-us/outlook/frequently-asked-questions-about-copilot-in-outlook",
+        "https://support.microsoft.com/en-US/Outlook/triage-email-with-microsoft-365-copilot-in-outlook"
+      ],
       "confidence": "high",
-      "checked": "2026-07-29",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Actions work on single or multiple emails. Sending remains user-initiated.",
-      "change_kind": "human_verified"
+      "note": "Actions work on individual or multiple messages and update Outlook. Larger bulk actions can require confirmation. Email triage is currently documented as English-only; sending remains user-initiated.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "m365-copilot",
       "attribute": "unattended",
       "value": "scheduled",
-      "display": "Yes, with scheduled prompts; richer workflows need agent setup",
-      "source_url": "https://support.microsoft.com/en-us/microsoft-365-copilot/schedule-your-most-used-copilot-prompts",
-      "confidence": "unverified",
-      "checked": "2026-07-29",
+      "display": "Yes—up to 10 scheduled prompts",
+      "source_url": "https://support.microsoft.com/en-US/Microsoft-365-Copilot/schedule-your-most-used-copilot-prompts",
+      "confidence": "high",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Not yet verified against the official source. Carried over from the machine-generated seed.",
-      "change_kind": "unverified_seed"
+      "note": "Requires a Microsoft 365 Copilot licence. Scheduled prompts can run through Copilot Chat, Teams or Outlook; administrators can disable Optional Connected Experiences.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "m365-copilot",
       "attribute": "training",
       "value": false,
       "display": "No",
-      "source_url": "https://learn.microsoft.com/en-us/copilot/faq",
-      "confidence": "unverified",
-      "checked": "2026-07-29",
+      "source_url": "https://learn.microsoft.com/en-us/microsoft-365/copilot/enterprise-data-protection",
+      "confidence": "high",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Not yet verified against the official source. Carried over from the machine-generated seed.",
-      "change_kind": "unverified_seed"
+      "note": "Under enterprise data protection, prompts, responses and Microsoft Graph-grounded organizational data are excluded from foundation-model training.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "custom-build",
@@ -633,12 +665,12 @@
       "attribute": "seat_minimum",
       "value": 0,
       "display": "No seat minimum",
-      "source_url": "https://developers.openai.com/api/docs/quickstart",
-      "confidence": "unverified",
-      "checked": "2026-07-29",
+      "source_url": "https://developers.openai.com/api/docs/models/gpt-5.6-sol",
+      "confidence": "high",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Not a fixed product. Requires a locked reference architecture before any value can be stated.",
-      "change_kind": "unverified_seed"
+      "note": "The model API is usage-based rather than licensed per person. Implementation, hosting and mailbox-provider costs remain separate.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "custom-build",
@@ -646,23 +678,32 @@
       "value": "api_and_implementation",
       "display": "API billing, hosting, OAuth and implementation work",
       "source_url": "https://developers.openai.com/api/docs/quickstart",
-      "confidence": "unverified",
-      "checked": "2026-07-29",
+      "sources": [
+        "https://developers.openai.com/api/docs/quickstart",
+        "https://developers.google.com/workspace/gmail/api/guides",
+        "https://learn.microsoft.com/en-us/graph/api/resources/mail-api-overview"
+      ],
+      "confidence": "high",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Not a fixed product. Requires a locked reference architecture before any value can be stated.",
-      "change_kind": "unverified_seed"
+      "note": "This is an architecture, not a packaged subscription. It needs an API project and billing plus a hosted application, mailbox OAuth permissions and operating controls.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "custom-build",
       "attribute": "mailbox_access",
       "value": "both",
       "display": "Gmail and Outlook, when integrated",
-      "source_url": "https://developers.openai.com/api/docs/guides/tools-connectors-mcp",
-      "confidence": "unverified",
-      "checked": "2026-07-29",
+      "source_url": "https://developers.google.com/workspace/gmail/api/guides",
+      "sources": [
+        "https://developers.google.com/workspace/gmail/api/guides",
+        "https://learn.microsoft.com/en-us/graph/api/resources/mail-api-overview"
+      ],
+      "confidence": "high",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Not a fixed product. Requires a locked reference architecture before any value can be stated.",
-      "change_kind": "unverified_seed"
+      "note": "Gmail access is provided by the Gmail API and Outlook access by Microsoft Graph. Each requires its own application registration, OAuth scopes and administrator consent policy.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "custom-build",
@@ -674,23 +715,27 @@
         "https://developers.google.com/workspace/gmail/api/guides",
         "https://learn.microsoft.com/en-us/graph/api/resources/mail-api-overview"
       ],
-      "confidence": "unverified",
-      "checked": "2026-07-29",
+      "confidence": "high",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Not a fixed product. Requires a locked reference architecture before any value can be stated.",
-      "change_kind": "unverified_seed"
+      "note": "Both mailbox APIs document read, draft, send and organization actions. The implemented scopes, approval gates and safety rules determine what a custom application can actually do.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "custom-build",
       "attribute": "unattended",
       "value": "fully_configurable",
-      "display": "Yes, with a scheduler, event trigger or queue",
-      "source_url": "https://developers.openai.com/api/docs/guides/background",
-      "confidence": "unverified",
-      "checked": "2026-07-29",
+      "display": "Yes, if built with a scheduler or mailbox change notifications",
+      "source_url": "https://developers.google.com/workspace/gmail/api/guides/push",
+      "sources": [
+        "https://developers.google.com/workspace/gmail/api/guides/push",
+        "https://learn.microsoft.com/en-us/graph/outlook-change-notifications-overview"
+      ],
+      "confidence": "high",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Not a fixed product. Requires a locked reference architecture before any value can be stated.",
-      "change_kind": "unverified_seed"
+      "note": "Gmail and Microsoft Graph provide mailbox change notifications, but the custom application must supply the scheduler or webhook service, retries, approvals and monitoring.",
+      "change_kind": "source_researched"
     },
     {
       "provider": "custom-build",
@@ -698,14 +743,22 @@
       "value": false,
       "display": "No, by default",
       "source_url": "https://platform.openai.com/docs/models/default-usage-policies-by-endpoint",
-      "confidence": "unverified",
-      "checked": "2026-07-29",
+      "sources": [
+        "https://platform.openai.com/docs/models/default-usage-policies-by-endpoint",
+        "https://openai.com/business-data/"
+      ],
+      "confidence": "high",
+      "checked": "2026-07-30",
       "last_changed": "2026-07-29",
-      "note": "Not a fixed product. Requires a locked reference architecture before any value can be stated.",
-      "change_kind": "unverified_seed"
+      "note": "OpenAI states that API inputs and outputs are not used to train models by default unless the customer explicitly opts in. Default abuse-monitoring retention still applies.",
+      "change_kind": "source_researched"
     }
   ],
   "changelog": [
+    {
+      "date": "2026-07-30",
+      "summary": "Replaced the remaining machine-generated non-price seed claims with source-backed research. Corrected current ChatGPT and Claude email-action capabilities; one-time baseline approval is still pending."
+    },
     {
       "date": "2026-07-29",
       "summary": "Pricing rows changed to the amounts and currencies shown to Canadian customers. Currency conversion was removed; vendor ambiguities remain explicitly unverified."

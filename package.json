@@ -10,6 +10,8 @@
     "test": "node --test",
     "research": "node scripts/research.mjs",
     "apply-price-review": "node scripts/apply-price-review.mjs",
+    "verify-seed": "node scripts/verify-seed.mjs",
+    "smoke": "node scripts/smoke-check.mjs",
     "check": "npm run validate && npm run build && npm test"
   }
 }
