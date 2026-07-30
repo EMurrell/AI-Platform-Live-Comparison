@@ -173,10 +173,13 @@ for (const cell of allCells) {
     continue;
   }
   const needles = needlesFor(cell);
-  if (needles.length > 0 && needles.some(needle => page.haystacks.some(haystack => haystack.includes(needle)))) {
+  const matched = needles.find(needle => page.haystacks.some(haystack => haystack.includes(needle)));
+  if (matched !== undefined) {
     cell.checked = today;
     cell.needs_verify = false;
     summary.confirmed.push(label);
+    // TEMPORARY: remove once CI has reported the US rendering of the Google price.
+    if (cell.render === true) console.log(`  - ${label} matched: ${JSON.stringify(matched)}`);
   } else {
     cell.needs_verify = true;
     summary.missing.push(label);
