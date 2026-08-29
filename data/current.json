@@ -51,7 +51,7 @@
       "display": "US$20/user/month billed annually, $25 billed monthly",
       "source_url": "https://help.openai.com/en/articles/8792828-what-is-chatgpt-business",
       "quote": "$20 per user per month if billed annually",
-      "checked": "2026-08-28",
+      "checked": "2026-08-29",
       "note": "Listed in US dollars; the vendor says pricing may vary depending on your country and currency type.",
       "needs_verify": false
     },
@@ -81,7 +81,7 @@
       "display": "No, not by default.",
       "source_url": "https://openai.com/business/pricing/",
       "quote": "No training on your business data by default",
-      "checked": "2026-08-28",
+      "checked": "2026-08-29",
       "note": null,
       "needs_verify": false
     },
@@ -91,7 +91,7 @@
       "display": "Owners and admins manage members and seats. Removing someone revokes access immediately and reassigns their projects and GPTs to an owner.",
       "source_url": "https://help.openai.com/en/articles/8266418-data-retention-when-a-member-is-removed-from-a-workspace",
       "quote": "On removal, a member's projects and GPTs are reassigned to a workspace owner",
-      "checked": "2026-08-28",
+      "checked": "2026-08-29",
       "note": "Chats and files in a Business workspace are retained indefinitely, and a removed member's conversations are not visible to the owner. App and connector admin controls are covered at help.openai.com/en/articles/11509118-admin-controls-security-and-compliance-in-apps-enterprise-edu-and-business",
       "needs_verify": false
     },
@@ -101,7 +101,7 @@
       "display": "$20/seat/month billed annually, $25 billed monthly",
       "source_url": "https://claude.com/pricing",
       "quote": "$20 per seat / month if billed annually",
-      "checked": "2026-08-28",
+      "checked": "2026-08-29",
       "note": "Currency not stated on vendor page for Canadian customers.",
       "needs_verify": false
     },
@@ -111,7 +111,7 @@
       "display": "2 users minimum, up to 150. No other paid subscription required.",
       "source_url": "https://claude.com/pricing",
       "quote": "For teams of 2 to 150",
-      "checked": "2026-08-28",
+      "checked": "2026-08-29",
       "note": "The person who creates the workspace needs a business email address.",
       "needs_verify": false
     },
@@ -131,7 +131,7 @@
       "display": "No, not by default.",
       "source_url": "https://claude.com/pricing",
       "quote": "No model training on your content by default",
-      "checked": "2026-08-28",
+      "checked": "2026-08-29",
       "note": null,
       "needs_verify": false
     },
@@ -141,7 +141,7 @@
       "display": "Owners and admins manage members and seats. Removing a member frees the seat; their history returns if the same email is re-added.",
       "source_url": "https://support.claude.com/en/articles/13133750-manage-members-on-team-and-enterprise-plans",
       "quote": "Removing a member frees up their seat for reassignment",
-      "checked": "2026-08-28",
+      "checked": "2026-08-29",
       "note": "Only owners and primary owners reach billing. Connectors must be enabled for the organization by an owner before members can use them, per support.claude.com/en/articles/11176164-use-connectors-to-extend-claude-s-capabilities",
       "needs_verify": false
     },
@@ -151,7 +151,7 @@
       "display": "CAD $18.40/user/month on a one-year commitment, billed monthly",
       "source_url": "https://workspace.google.com/intl/en_ca/pricing.html",
       "quote": "save 16% with 1 year commitment",
-      "checked": "2026-08-28",
+      "checked": "2026-08-29",
       "note": "The vendor labels the annual option \"save 16% with 1 year commitment\", so the flexible month-to-month plan costs more. This price is the Google Workspace Business Standard subscription itself, a full office suite with Gemini included, not a Gemini add-on. Introductory discounts available; terms vary. The dollar figure is rendered in the visitor's local currency, so the daily check watches the commitment label rather than the price.",
       "needs_verify": false
     },
@@ -161,7 +161,7 @@
       "display": "1 user minimum, up to 300. Requires a Google Workspace Business Standard subscription, which includes Gemini.",
       "source_url": "https://knowledge.workspace.google.com/admin/getting-started/editions/compare-business-editions",
       "quote": "Number of users 1-300",
-      "checked": "2026-08-28",
+      "checked": "2026-08-29",
       "note": null,
       "needs_verify": false
     },
@@ -171,7 +171,7 @@
       "display": "Works with Gmail only. Summarizes threads, suggests replies and drafts email; you send and file it.",
       "source_url": "https://support.google.com/mail/answer/14355636",
       "quote": "Gemini can draft a new email or a reply",
-      "checked": "2026-08-28",
+      "checked": "2026-08-29",
       "note": "Drafting happens in Gemini inside Gmail; the separate Gemini app cannot create drafts.",
       "needs_verify": false
     },
@@ -191,7 +191,7 @@
       "display": "An admin turns Gemini on or off per Workspace service and per group. It is on by default.",
       "source_url": "https://knowledge.workspace.google.com/admin/generative-ai/workspace-with-gemini/manage-access-to-gemini-features-in-workspace-services",
       "quote": "As an administrator, you can choose to enable or disable Gemini features and the side panel in the following Workspace services",
-      "checked": "2026-08-28",
+      "checked": "2026-08-29",
       "note": "Changing the setting needs the Gemini settings administrator privilege. When someone leaves, an admin can move their data to another account and delete the original, per knowledge.workspace.google.com/admin/users/maintain-data-security-after-an-employee-leaves",
       "needs_verify": false
     },
@@ -201,7 +201,7 @@
       "display": "CAD $28.50/user/month paid yearly, $34.20 billed monthly",
       "source_url": "https://www.microsoft.com/en-ca/microsoft-365-copilot/pricing",
       "quote": "CAD $28.50",
-      "checked": "2026-08-28",
+      "checked": "2026-08-29",
       "note": "A lower first-year price is currently offered on annual commitments. Copilot Business is an add-on: a Microsoft 365 Business plan is required underneath, so the total cost is higher than this line. The same page also sells Microsoft 365 Business Standard with Copilot at CAD $31.90 user/month, paid yearly.",
       "needs_verify": false
     },
@@ -221,7 +221,7 @@
       "display": "Works with Outlook only. Drafts and prioritizes email, and can pin, flag, archive, delete or mark messages read.",
       "source_url": "https://support.microsoft.com/en-us/outlook/frequently-asked-questions-about-copilot-in-outlook",
       "quote": "actions such as pin, flag, archive, delete, and mark as read or unread",
-      "checked": "2026-08-28",
+      "checked": "2026-08-29",
       "note": "Actions work on single or multiple messages; larger batches can ask for confirmation.",
       "needs_verify": false
     },
@@ -231,7 +231,7 @@
       "display": "No.",
       "source_url": "https://learn.microsoft.com/en-us/microsoft-365/copilot/enterprise-data-protection",
       "quote": "isn't used to train foundation models",
-      "checked": "2026-08-28",
+      "checked": "2026-08-29",
       "note": "Prompts, responses and Microsoft Graph data are excluded under enterprise data protection.",
       "needs_verify": false
     },
@@ -241,7 +241,7 @@
       "display": "An AI Administrator configures Copilot for the whole tenant in the Microsoft 365 admin center; a Global Reader can view the settings.",
       "source_url": "https://learn.microsoft.com/en-us/microsoft-365/copilot/microsoft-365-copilot-page",
       "quote": "To view and make changes to the Copilot scenarios in the Microsoft 365 admin center, sign in with the AI Administrator role",
-      "checked": "2026-08-28",
+      "checked": "2026-08-29",
       "note": "The admin center only shows services licensed in your tenant, so which Copilot settings appear depends on the licences you hold.",
       "needs_verify": false
     }
@@ -294,7 +294,7 @@
         "display": "$20/month, billed monthly.",
         "source_url": "https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus",
         "quote": "ChatGPT Plus is a subscription plan that provides enhanced access to the ChatGPT web app for $20/month",
-        "checked": "2026-08-28",
+        "checked": "2026-08-29",
         "note": "The article states no currency. OpenAI says purchases are in US dollars with local-currency billing in a limited set of countries, that annual billing is not offered for Go, Plus or Pro, and that a lower-cost Go plan is sold in every supported country, at help.openai.com/en/articles/11989085-what-is-chatgpt-go",
         "needs_verify": false
       },
@@ -304,7 +304,7 @@
         "display": "Yes, unless you opt out.",
         "source_url": "https://help.openai.com/en/articles/5722486-how-your-data-is-used-to-improve-model-performance",
         "quote": "When you use our services for individuals such as ChatGPT and Codex, we may use your content to train our models",
-        "checked": "2026-08-28",
+        "checked": "2026-08-29",
         "note": "Turn it off under Settings, Data Controls. The same page says OpenAI does not train on business plans by default, and that temporary chats are never used for training.",
         "needs_verify": false
       },
@@ -335,7 +335,7 @@
         "display": "$17/month with an annual subscription ($200 up front), $20 billed monthly.",
         "source_url": "https://claude.com/pricing",
         "quote": "$17 per month with annual subscription discount",
-        "checked": "2026-08-28",
+        "checked": "2026-08-29",
         "note": "Currency not stated on vendor page for Canadian customers.",
         "needs_verify": false
       },
@@ -345,7 +345,7 @@
         "display": "Only if you turn on model improvement in your privacy settings.",
         "source_url": "https://privacy.claude.com/en/articles/10023580-is-my-data-used-for-model-training",
         "quote": "you choose to allow us to use your chats and coding sessions to improve Claude",
-        "checked": "2026-08-28",
+        "checked": "2026-08-29",
         "note": "Conversations flagged for safety review may still be used; incognito chats are not. The plan comparison table on claude.com/pricing labels this row \"Opt-out\" for the personal plans.",
         "needs_verify": false
       },
@@ -355,7 +355,7 @@
         "display": "Connects to Gmail and drafts, but cannot send. If the mailbox is a Google Workspace account, your employer's admin may have to allow Claude first.",
         "source_url": "https://support.claude.com/en/articles/10166901-use-google-workspace-connectors",
         "quote": "your Google Workspace admin may need to allow Claude as a trusted application",
-        "checked": "2026-08-28",
+        "checked": "2026-08-29",
         "note": "Outlook connects through a separate Microsoft 365 connector, set up at support.claude.com/en/articles/12542951-set-up-the-microsoft-365-connector",
         "needs_verify": false
       },
@@ -379,7 +379,7 @@
           "$26.99 CAD /mo",
           "$19.99 /mo"
         ],
-        "checked": "2026-08-28",
+        "checked": "2026-08-29",
         "note": "The page prices by region, so the daily check renders it in a browser and watches the price shown for the checker's region, which from GitHub is the US one. The Canadian figure shown here was last read by a person on 30 July 2026. Google shows monthly billing only, and sells a cheaper Google AI Plus plan on the same page.",
         "needs_verify": false,
         "render": true
@@ -390,7 +390,7 @@
         "display": "Yes, unless you turn off Keep Activity.",
         "source_url": "https://support.google.com/gemini/answer/13594961",
         "quote": "To stop your future chats from being reviewed to improve Google services, turn off your Keep Activity setting",
-        "checked": "2026-08-28",
+        "checked": "2026-08-29",
         "note": "With Keep Activity off, chats are still kept for 72 hours, and chats already seen by human reviewers are kept for up to three years.",
         "needs_verify": false
       },
@@ -400,7 +400,7 @@
         "display": "On a work or school Google account, access must be enabled by your employer's Workspace administrator.",
         "source_url": "https://support.google.com/gemini/answer/14620100",
         "quote": "access must be enabled by your Google Workspace administrator",
-        "checked": "2026-08-28",
+        "checked": "2026-08-29",
         "note": "Feature availability and data handling on a work account follow the employer's Workspace licence, not a personal Google AI Pro subscription.",
         "needs_verify": false
       },
@@ -421,7 +421,7 @@
         "display": "CAD $115.00/year, or CAD $11.50/month",
         "source_url": "https://www.microsoft.com/en-ca/microsoft-365/buy/compare-all-microsoft-365-products",
         "quote": "Microsoft 365 Personal CAD $11.50/month CAD $115.00/year",
-        "checked": "2026-08-28",
+        "checked": "2026-08-29",
         "note": "Copilot is included in the plan. Microsoft sells Family and Premium plans on the same page.",
         "needs_verify": false
       },
@@ -431,7 +431,7 @@
         "display": "No.",
         "source_url": "https://support.microsoft.com/en-us/privacy/copilot-in-microsoft-365-apps-for-home-your-data-and-privacy",
         "quote": "Prompts, responses, and your file contents when using Copilot in Microsoft 365 apps aren't used to train foundation models",
-        "checked": "2026-08-28",
+        "checked": "2026-08-29",
         "note": "This covers Copilot inside Word, Excel, Outlook and the other Microsoft 365 apps. The separate Copilot app and copilot.microsoft.com do use conversations for model training unless you opt out, per support.microsoft.com/en-us/microsoft-copilot/privacy-faq-for-microsoft-copilot",
         "needs_verify": false
       },
